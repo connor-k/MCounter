@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO finish -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:rotation="180"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="Player 2"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ProgressBar
+                android:id="@+id/progressBar1"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:max="20"
+                android:padding="8dp"
+                android:progress="20" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="20 / 20"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/button1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+1" />
+
+                    <Button
+                        android:id="@+id/button2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+5" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/button3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-1" />
+
+                    <Button
+                        android:id="@+id/button4"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-5" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="Player 1"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ProgressBar
+                android:id="@+id/progressBar1"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:max="20"
+                android:padding="8dp"
+                android:progress="20" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="20 / 20"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/button1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+1" />
+
+                    <Button
+                        android:id="@+id/button2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+5" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/button3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-1" />
+
+                    <Button
+                        android:id="@+id/button4"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-5" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
