@@ -28,14 +28,14 @@
             android:orientation="horizontal" >
 
             <RadioButton
-                android:id="@+id/radio_setup_2"
+                android:id="@+id/radio_setup_2p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="@string/setup_default_number_players" />
 
             <RadioButton
-                android:id="@+id/radio_setup_3"
+                android:id="@+id/radio_setup_3p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
@@ -43,7 +43,7 @@
                 android:text="@string/setup_3_players" />
 
             <RadioButton
-                android:id="@+id/radio_setup_4"
+                android:id="@+id/radio_setup_4p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/setup_4_players" />
@@ -74,12 +74,14 @@
             android:id="@+id/button_setup_p3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="@string/button_setup_p3_label" />
 
         <Button
             android:id="@+id/button_setup_p4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="@string/button_setup_p4_label" />
 
         <TextView

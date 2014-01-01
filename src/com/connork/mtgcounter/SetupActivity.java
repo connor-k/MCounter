@@ -21,13 +21,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
-	private int num_players;
+	private int num_players, starting_life;
+	private String player_names[] = new String[4];
 	private Button button_players[] = new Button[4];
+	private RadioGroup radio_group;
+	private RadioButton radio_button[] = new RadioButton[3];
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,26 +52,40 @@ public class SetupActivity extends Activity implements OnClickListener {
 		button_players[1] = (Button) findViewById(R.id.button_setup_p2);
 		button_players[2] = (Button) findViewById(R.id.button_setup_p3);
 		button_players[3] = (Button) findViewById(R.id.button_setup_p4);
+		for (int i = 0; i < 4; i++) {
+			button_players[i].setOnClickListener(this);
+		}
 
-		//TODO replace with radio buttons
-		new AlertDialog.Builder(this)
-		.setTitle("How Many Players?")
-		.setItems(R.array.num_players, new DialogInterface.OnClickListener() 
-		{
-			public void onClick(DialogInterface dialoginterface, int num) 
+		radio_button[0] = (RadioButton) findViewById(R.id.radio_setup_2p);
+		radio_button[1] = (RadioButton) findViewById(R.id.radio_setup_3p);
+		radio_button[2] = (RadioButton) findViewById(R.id.radio_setup_4p);
+		radio_group = (RadioGroup) findViewById(R.id.radiogroup_setup_number_players);
+		radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) 
 			{
-				num_players = (num + 2);
+				RadioButton checkedRadioButton = (RadioButton) findViewById(checkedId);
+				String text = checkedRadioButton.getText().toString();
+
+				if (text.equals(radio_button[0].getText())) {
+					num_players = 2;
+				}
+				else if (text.equals(radio_button[1].getText())) {
+					num_players = 3;
+				}
+				else if (text.equals(radio_button[2].getText())) {
+					num_players = 4;
+				}
 				for (int i = 0; i < 4; i++) {
-					button_players[i].setOnClickListener(SetupActivity.this);
-					if (i > num_players - 1) {
-						button_players[i].setEnabled(false);
+					if (i < num_players) {
+						button_players[i].setEnabled(true);
 					}
 					else {
-						button_players[i].setText(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_NAME_P" + (i + 1), "Player " + (i + 1)));
+						button_players[i].setEnabled(false);
 					}
 				}
 			}
-		}).show();
+		});
 
 		// Set up the SeekBar that determines initial life
 		SeekBar seekBar = (SeekBar)findViewById(R.id.seekbar_setup_life);
@@ -77,11 +96,12 @@ public class SetupActivity extends Activity implements OnClickListener {
 			public void onProgressChanged(SeekBar seekBar, int progress, 
 					boolean fromUser) { 
 				// Don't let them start with less than 1 life
-				if (seekBar.getProgress() < 1) {
+				if (progress < 1) {
 					seekBar.setProgress(1);
 				}
 				else {
-					seekBarText.setText("Initial Life: " + progress);
+					starting_life = progress;
+					seekBarText.setText("Initial Life: " + starting_life);
 				}
 			} 
 
@@ -93,11 +113,28 @@ public class SetupActivity extends Activity implements OnClickListener {
 			public void onStopTrackingTouch(SeekBar seekBar) { 
 			} 
 		}); 
-		
-		//TODO Pass MainActivity the num players, names, initial life
+
 		//TODO Add settings, keep screen on
-		//TODO Activity lifecycle stuff
-		//TODO Don't access SharedPreferences often
+
+		// Restore last state if possible
+		if (savedInstanceState != null)
+		{
+			num_players = savedInstanceState.getInt("setup_num_players", 2);
+			player_names = savedInstanceState.getStringArray("setup_player_names");
+			starting_life = savedInstanceState.getInt("setup_starting_life", 20);
+		}
+		else {
+			String names = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_PLAYER_NAMES", "Player 1, Player 2, Player 3, Player 4");
+			player_names = names.split(",");
+			num_players = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_NUM_PLAYERS", 2);
+			starting_life = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_STARTING_LIFE", 20);
+		}
+		radio_button[num_players - 2].toggle();
+		for (int i = 0; i < 4; i++) {
+			button_players[i].setText(player_names[i]);
+		}
+		seekBar.setProgress(starting_life);
+		seekBarText.setText("Initial Life: " + starting_life);
 	} 
 
 	/** Handle when a button is clicked, call appropriate action */
@@ -130,7 +167,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 		// Set an EditText view to get name   
 		final EditText input = new EditText(this); 
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-		input.setText(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_NAME_P" + player, "Player " + player));
+		input.setText(player_names[player - 1]);
 		int position = input.length();
 		Editable etext = input.getText();
 		Selection.setSelection(etext, position);
@@ -138,7 +175,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String name = input.getText().toString();
-				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_NAME_P" + player, name).commit();
+				player_names[player - 1] = name;
 				button_players[player - 1].setText(name);
 			} });
 		alertDialog.show();
@@ -157,6 +194,9 @@ public class SetupActivity extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 		case R.id.menu_setup_done:
 			Intent intent = new Intent(SetupActivity.this, MainActivity.class);
+			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, num_players);
+			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, player_names);
+			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			startActivity(intent);
 			return true;
 		}
@@ -175,5 +215,40 @@ public class SetupActivity extends Activity implements OnClickListener {
 				}
 			}
 		}
+	}
+
+
+	@Override
+	protected void onPause()
+	{
+
+		super.onPause();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		// Save the player names, etc.
+		String names = player_names[0] + ',' + player_names[1] + ',' + player_names[2] + ',' + player_names[3];
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_PLAYER_NAMES", names).commit();
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_NUM_PLAYERS", num_players).commit();
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_STARTING_LIFE", starting_life).commit();
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onResume() 
+	{
+
+		super.onResume();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putInt("setup_num_players", num_players);
+		outState.putStringArray("setup_player_names", player_names);
+		outState.putInt("setup_starting_life", starting_life);
 	}
 }
