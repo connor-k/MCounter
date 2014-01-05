@@ -15,6 +15,11 @@
     <string name="button_setup_p3_label">Player 3</string>
     <string name="button_setup_p4_label">Player 4</string>
     <string name="setup_initial_life">Initial Life: 20</string>
+    <!-- MainActivity -->
+    <string name="button_plus1">+1</string>
+    <string name="button_plus5">+5</string>
+    <string name="button_minus1">-1</string>
+    <string name="button_minus5">-5</string>
     <!-- Menus -->
     <string name="menu_done_label">Done</string>
     <string name="menu_working_label">Working…</string>
