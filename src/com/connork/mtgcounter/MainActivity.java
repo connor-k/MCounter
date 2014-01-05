@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			TEXTVIEW_LIFE[3] = (TextView)findViewById(R.id.textview_main_p4_life);
 			PROGRESSBAR_LIFE[3] = (SeekBar) findViewById(R.id.progressbar_main_p4_life);
 			radio_button[1] = (RadioButton) findViewById(R.id.radio_main_p2);
-			radio_button[1].setText(PLAYER_NAMES[2]);
+			radio_button[1].setText(PLAYER_NAMES[1]);
 			radio_button[3] = (RadioButton) findViewById(R.id.radio_main_p4);
 			radio_button[3].setText(PLAYER_NAMES[3]);
 			radiogroup_p24 = (RadioGroup) findViewById(R.id.radiogroup_main_p24);
