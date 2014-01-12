@@ -24,5 +24,13 @@
     <string name="menu_done_label">Done</string>
     <string name="menu_working_label">Working…</string>
     <string name="menu_settings_label">Settings</string>
+    <!-- Settings -->
+    <string name="prefs_title">MTGCounter Settings</string>
+    <string name="immersive_mode_title">Fullscreen</string>
+    <string name="immersive_mode_summaryOn">The counter activity will be fullscreen.</string>
+    <string name="immersive_mode_summaryOff">The counter activity will not be fullscreen.</string>
+    <string name="life_counter_touchable_title">Life Counter Touchable</string>
+    <string name="life_counter_touchable_summaryOn">Life can be adjusted by using the buttons or moving the life scrollbar.</string>
+    <string name="life_counter_touchable_summaryOff">Life can only be adjusted by using the buttons, not by moving the life scrollbar.</string>
 
 </resources>

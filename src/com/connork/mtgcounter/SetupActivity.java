@@ -199,6 +199,10 @@ public class SetupActivity extends Activity implements OnClickListener {
 			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			startActivity(intent);
 			return true;
+		case R.id.menu_main_settings:
+			Intent intent2 = new Intent(SetupActivity.this, Prefs.class);
+			startActivity(intent2);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
