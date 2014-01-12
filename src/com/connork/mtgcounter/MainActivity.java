@@ -7,6 +7,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Shader;
@@ -20,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -69,7 +71,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		case 4: 
 			setContentView(R.layout.activity_main4);
 			((TextView)findViewById(R.id.textview_main_p4_name)).setText(PLAYER_NAMES[3]);
-			
+
 			TEXTVIEW_LIFE[3] = (TextView)findViewById(R.id.textview_main_p4_life);
 			PROGRESSBAR_LIFE[3] = (SeekBar) findViewById(R.id.progressbar_main_p4_life);
 			radio_button[1] = (RadioButton) findViewById(R.id.radio_main_p2);
@@ -92,12 +94,36 @@ public class MainActivity extends Activity implements OnClickListener {
 					}
 				}
 			});
+			// Check settings to prevent them from sliding the seekbar to change their life.
+			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
+				PROGRESSBAR_LIFE[3].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+						updateViews(3);
+					}
+
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+					}
+				});
+			}
+			else {
+				PROGRESSBAR_LIFE[3].setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						return true;
+					}
+				});
+			}
 		case 3:
 			if (NUM_PLAYERS == 3) {
 				setContentView(R.layout.activity_main3);
 			}
 			((TextView)findViewById(R.id.textview_main_p3_name)).setText(PLAYER_NAMES[2]);
-			
+
 			TEXTVIEW_LIFE[2] = (TextView)findViewById(R.id.textview_main_p3_life);
 			PROGRESSBAR_LIFE[2] = (SeekBar) findViewById(R.id.progressbar_main_p3_life);
 			radio_button[0] = (RadioButton) findViewById(R.id.radio_main_p1);
@@ -120,7 +146,30 @@ public class MainActivity extends Activity implements OnClickListener {
 					}
 				}
 			});
-		
+			// Check settings to prevent them from sliding the seekbar to change their life.
+			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
+				PROGRESSBAR_LIFE[2].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+						updateViews(2);
+					}
+
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+					}
+				});
+			}
+			else {
+				PROGRESSBAR_LIFE[2].setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						return true;
+					}
+				});
+			}
 		case 2:
 			if (NUM_PLAYERS == 2) {
 				setContentView(R.layout.activity_main);
@@ -144,7 +193,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				BUTTON_LIFE[i].setOnClickListener(this);
 			}
 
-			// Setup life meters, and make the seekbars unmovable
+			// Setup life meters
 			PROGRESSBAR_LIFE[0] = (SeekBar) findViewById(R.id.progressbar_main_p1_life);
 			PROGRESSBAR_LIFE[1] = (SeekBar) findViewById(R.id.progressbar_main_p2_life);
 			// Animate filling the life bars
@@ -180,17 +229,53 @@ public class MainActivity extends Activity implements OnClickListener {
 					for (int i = 0; i < NUM_PLAYERS; i++) {
 						TEXTVIEW_LIFE[i].setText(life[i] + " / " + STARTING_LIFE);
 						TEXTVIEW_LIFE[i].setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
-						// Prevent them from sliding the seekbar to change their life
-						PROGRESSBAR_LIFE[i].setOnTouchListener(new OnTouchListener(){
-							@Override
-							public boolean onTouch(View v, MotionEvent event) {
-								return true;
-							}
-						});
 					}
 				}
 			}.execute();
+			// Check settings to prevent them from sliding the seekbar to change their life.
+			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
+				PROGRESSBAR_LIFE[1].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+						updateViews(1);
+					}
 
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+					}
+				});
+				PROGRESSBAR_LIFE[0].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+						updateViews(0);
+					}
+
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+					}
+					
+				});
+			}
+			else {
+				PROGRESSBAR_LIFE[1].setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						return true;
+					}
+				});
+				PROGRESSBAR_LIFE[0].setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						return true;
+					}
+				});
+			}
 			break;
 		}
 
@@ -202,8 +287,37 @@ public class MainActivity extends Activity implements OnClickListener {
 		actionBar.setBackgroundDrawable(bitmapDrawable);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
-		//TODO Add settings, keep screen on
-		//TODO Activity lifecycle stuff	
+		// Keep screen on
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		//TODO Continue game
+		//TODO Activity lifecycle stuff
+	}
+
+	/** Update life */
+	void updateViews(int p) {
+		final int player = p;
+		life[player] = (int)(PROGRESSBAR_LIFE[player].getProgress()/1000.0*STARTING_LIFE);
+		TEXTVIEW_LIFE[player].setText(life[player] + " / " + STARTING_LIFE);
+
+		// Color the text based on life
+		int color = 0;
+		if (life[player] > STARTING_LIFE) {
+			color = android.R.color.holo_purple;
+		}
+		else if (life[player] > STARTING_LIFE*3.0/4.0) {
+			color = android.R.color.holo_blue_dark;
+		}
+		else if (life[player] > STARTING_LIFE*2.0/4.0) {
+			color = android.R.color.holo_green_dark;
+		}
+		else if (life[player] > STARTING_LIFE/4.0) {
+			color = android.R.color.holo_orange_dark;
+		}
+		else if (life[player] <= STARTING_LIFE/4.0) {
+			color = android.R.color.holo_red_dark;
+		}
+		TEXTVIEW_LIFE[player].setTextColor(getResources().getColor(color));
 	}
 
 	/** Update life and progress bars */
@@ -211,7 +325,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		final int player = p;
 		life[player] += increment;
 		TEXTVIEW_LIFE[player].setText(life[player] + " / " + STARTING_LIFE);
-		
+
+		//TODO make smooth with successive touches
 		ValueAnimator anim = ValueAnimator.ofInt((int)((life[player] + -1*increment)*1000.0/STARTING_LIFE), (int)(life[player]*1000.0/STARTING_LIFE));
 		anim.setDuration(2000);
 		anim.addUpdateListener(new AnimatorUpdateListener() {
@@ -286,32 +401,36 @@ public class MainActivity extends Activity implements OnClickListener {
 	/** Someone has won */
 	private void gameOver(int player) {
 		AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle("Player " + player + " has lost.");
-        alertDialog.setMessage("GG.");
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                //Dismiss
-            } });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "End Game", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            } });
-        alertDialog.show();
+		alertDialog.setTitle("Player " + player + " has lost.");
+		alertDialog.setMessage("GG.");
+		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				//Dismiss
+			} });
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "End Game", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			} });
+		alertDialog.show();
 	}
-	
+
 	/** Use KitKat Immersive Mode if possible */
 	@TargetApi(android.os.Build.VERSION_CODES.KITKAT)
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-	        super.onWindowFocusChanged(hasFocus);
-	    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && hasFocus) {
-	    	getWindow().getDecorView().setSystemUiVisibility(
-	                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-	                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-	                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-	                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-	                | View.SYSTEM_UI_FLAG_FULLSCREEN
-	                | View.SYSTEM_UI_FLAG_IMMERSIVE);}
+		super.onWindowFocusChanged(hasFocus);
+		if (Prefs.getImmersiveMode(MainActivity.this) && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && hasFocus) {
+			getWindow().getDecorView().setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+					| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+					| View.SYSTEM_UI_FLAG_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_IMMERSIVE);}
+		// Fullscreen for non-kitkat devices
+		else if (Prefs.getImmersiveMode(MainActivity.this) && hasFocus) {
+			MainActivity.this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -325,6 +444,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		case android.R.id.home:
 			finish();
 			return true;
+		case R.id.menu_main_settings:
+			Intent intent = new Intent(MainActivity.this, Prefs.class);
+			startActivity(intent);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -334,5 +457,19 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onSaveInstanceState(outState);
 
 		outState.putIntArray("main_life", life);
+	}
+
+	@Override
+	public void onPause() {
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		super.onPause();
 	}
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="immersive_mode"
+        android:summaryOff="@string/immersive_mode_summaryOff"
+        android:summaryOn="@string/immersive_mode_summaryOn"
+        android:title="@string/immersive_mode_title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="life_counter_touchable"
+        android:summaryOff="@string/life_counter_touchable_summaryOff"
+        android:summaryOn="@string/life_counter_touchable_summaryOn"
+        android:title="@string/life_counter_touchable_title" />
+
+</PreferenceScreen>
