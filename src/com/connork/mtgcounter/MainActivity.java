@@ -391,17 +391,19 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 
 		for (int i = 0; i < life.length; i++) {
-			if (life[i] < 0) {
-				gameOver(i + 1);
+			if (life[i] <= 0) {
+				gameOver(i); // careful for off-by-one
 				break;
 			}
 		}
 	}
 
-	/** Someone has won */
+	/** Someone has lost */
 	private void gameOver(int player) {
 		AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-		alertDialog.setTitle("Player " + player + " has lost.");
+		String playerName = PLAYER_NAMES[player];
+		//alertDialog.setTitle("Player " + player + " has lost.");
+		alertDialog.setTitle(playerName + " has lost.");
 		alertDialog.setMessage("GG.");
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
