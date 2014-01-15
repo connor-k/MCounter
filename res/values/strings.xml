@@ -39,5 +39,13 @@
     <string name="life_counter_touchable_title">Life Counter Touchable</string>
     <string name="life_counter_touchable_summaryOn">Life can be adjusted by using the buttons or moving the life scrollbar.</string>
     <string name="life_counter_touchable_summaryOff">Life can only be adjusted by using the buttons, not by moving the life scrollbar.</string>
+    <string-array name="icon_dropdown_options">
+        <item>Colorless</item>
+        <item>Forest</item>
+        <item>Island</item>
+        <item>Mountain</item>
+        <item>Plains</item>
+        <item>Swamp</item>
+    </string-array>
 
 </resources>

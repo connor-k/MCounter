@@ -416,6 +416,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		// Make an AlertDialog with a loss message
 		AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
 		alertDialog.setTitle(PLAYER_NAMES[player] + " has lost.");
+
 		alertDialog.setMessage("GG.");
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
