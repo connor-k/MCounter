@@ -111,8 +111,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
 				PROGRESSBAR_LIFE[PLAYER_4].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
 					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						life[PLAYER_4] = progress;
-						updateViews(PLAYER_4);
+						life[PLAYER_4] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
+						updateViews(PLAYER_4, fromUser);
 					}
 
 					@Override
@@ -169,8 +169,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
 				PROGRESSBAR_LIFE[PLAYER_3].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
 					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						life[PLAYER_3] = progress;
-						updateViews(PLAYER_3);
+						life[PLAYER_3] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
+						updateViews(PLAYER_3, fromUser);
 					}
 
 					@Override
@@ -263,8 +263,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				// Player 2
 				PROGRESSBAR_LIFE[PLAYER_2].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
 					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						life[PLAYER_2] = progress;
-						updateViews(PLAYER_2);
+						life[PLAYER_2] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
+						updateViews(PLAYER_2, fromUser);
 					}
 
 					@Override
@@ -278,8 +278,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				// Player 1
 				PROGRESSBAR_LIFE[PLAYER_1].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
 					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						life[PLAYER_1] = progress;
-						updateViews(PLAYER_1);
+						life[PLAYER_1] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
+						updateViews(PLAYER_1, fromUser);
 					}
 
 					@Override
@@ -327,7 +327,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	/** Update life for a specific player */
-	void updateViews(int p) {
+	void updateViews(int p, boolean gameStarted) {
 		final int player = p;
 		TEXTVIEW_LIFE[player].setText(life[player] + " / " + STARTING_LIFE);
 
@@ -350,13 +350,15 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		TEXTVIEW_LIFE[player].setTextColor(getResources().getColor(color));
 		
-		for (int i = 0; i < life.length; i++) {
-			if (life[i] <= 0) {
-				// If someone has 0 or less life, make a gg dialog and mark them as dead (avoid multiple dialogs for same person).
-				if (alive[i]) {
-					alive[i] = false;
-					gameOver(i);
-					break;
+		if(gameStarted) {
+			for (int i = 0; i < life.length; i++) {
+				if (life[i] <= 0) {
+					// If someone has 0 or less life, make a gg dialog and mark them as dead (avoid multiple dialogs for same person).
+					if (alive[i]) {
+						alive[i] = false;
+						gameOver(i);
+						break;
+					}
 				}
 			}
 		}
@@ -371,42 +373,42 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Adjust the selected player's life, then update the textview
 			life[selected_p13] += 1;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13);
+			updateViews(selected_p13, true);
 			break;
 		case R.id.button_main_p1_lifep5:
 			life[selected_p13] += 5;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13);
+			updateViews(selected_p13, true);
 			break;
 		case R.id.button_main_p1_lifem1:
 			life[selected_p13] -= 1;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13);
+			updateViews(selected_p13, true);
 			break;
 		case R.id.button_main_p1_lifem5:
 			life[selected_p13] -= 5;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13);
+			updateViews(selected_p13, true);
 			break;
 		case R.id.button_main_p2_lifep1:
 			life[selected_p24] += 1;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24);
+			updateViews(selected_p24, true);
 			break;
 		case R.id.button_main_p2_lifep5:
 			life[selected_p24] += 5;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24);
+			updateViews(selected_p24, true);
 			break;
 		case R.id.button_main_p2_lifem1:
 			life[selected_p24] -= 1;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24);
+			updateViews(selected_p24, true);
 			break;
 		case R.id.button_main_p2_lifem5:
 			life[selected_p24] -= 5;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24);
+			updateViews(selected_p24, true);
 			break;
 		}
 	}
