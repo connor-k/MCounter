@@ -15,6 +15,7 @@
     <string name="button_setup_p3_label">Player 3</string>
     <string name="button_setup_p4_label">Player 4</string>
     <string name="setup_initial_life">Initial Life: 20</string>
+    <string name="button_setup_continue_label">Continue Previous Game</string>
     <!-- MainActivity -->
     <string name="button_plus1">+1</string>
     <string name="button_plus5">+5</string>

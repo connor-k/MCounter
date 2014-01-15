@@ -4,7 +4,8 @@
     android:layout_height="fill_parent"
     android:background="@drawable/deck"
     android:orientation="horizontal"
-    android:padding="30dip" >
+    android:padding="30dip"
+    android:textAlignment="center" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -24,8 +25,8 @@
             android:id="@+id/radiogroup_setup_number_players"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:padding="4dp" >
 
             <RadioButton
                 android:id="@+id/radio_setup_2p"
@@ -58,31 +59,112 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/button_setup_p1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_setup_p1_label" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-        <Button
-            android:id="@+id/button_setup_p2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_setup_p2_label" />
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1.0" >
 
-        <Button
-            android:id="@+id/button_setup_p3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/button_setup_p3_label" />
+                <Button
+                    android:id="@+id/button_setup_p1_mana"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_mana"
+                    android:gravity="center_vertical|center_horizontal|left"
+                    android:height="32dp"
+                    android:maxWidth="32dp"
+                    android:minHeight="32dp"
+                    android:minWidth="32dp" />
 
-        <Button
-            android:id="@+id/button_setup_p4"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/button_setup_p4_label" />
+                <Button
+                    android:id="@+id/button_setup_p1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:text="@string/button_setup_p1_label" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1.0" >
+
+                <Button
+                    android:id="@+id/button_setup_p2_mana"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_mana"
+                    android:gravity="center_vertical|center_horizontal|left"
+                    android:height="32dp"
+                    android:maxWidth="32dp"
+                    android:minHeight="32dp"
+                    android:minWidth="32dp" />
+
+                <Button
+                    android:id="@+id/button_setup_p2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:text="@string/button_setup_p2_label" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1.0" >
+
+                <Button
+                    android:id="@+id/button_setup_p3_mana"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_mana"
+                    android:gravity="center_vertical|center_horizontal|left"
+                    android:height="32dp"
+                    android:maxWidth="32dp"
+                    android:minHeight="32dp"
+                    android:minWidth="32dp" />
+
+                <Button
+                    android:id="@+id/button_setup_p3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:enabled="false"
+                    android:text="@string/button_setup_p3_label" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1.0" >
+
+                <Button
+                    android:id="@+id/button_setup_p4_mana"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_mana"
+                    android:gravity="center_vertical|center_horizontal|left"
+                    android:height="32dp"
+                    android:maxWidth="32dp"
+                    android:minHeight="32dp"
+                    android:minWidth="32dp" />
+
+                <Button
+                    android:id="@+id/button_setup_p4"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:enabled="false"
+                    android:text="@string/button_setup_p4_label" />
+            </TableRow>
+        </TableLayout>
 
         <TextView
             android:id="@+id/textview_setup_initial_life"
@@ -100,6 +182,13 @@
             android:indeterminate="false"
             android:max="40"
             android:progress="20" />
+
+        <Button
+            android:id="@+id/button_setup_continue"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/button_setup_continue_label" />
     </LinearLayout>
 
 </ScrollView>
