@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -140,6 +141,10 @@ public class SetupActivity extends Activity implements OnClickListener {
 			player_names = names.split(",");
 			num_players = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_NUM_PLAYERS", 2);
 			starting_life = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_STARTING_LIFE", 20);
+			String icons = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_PLAYER_ICONS", "0,0,0,0");
+			String[] iconNums = icons.split(",");
+			for(int a = 0; a < iconNums.length; a++)
+				mana_color[a] = Integer.parseInt(iconNums[a]);
 		}
 		// Select the appropriate radio button for how many people are playing
 		radio_button[num_players - 2].toggle();
@@ -189,10 +194,11 @@ public class SetupActivity extends Activity implements OnClickListener {
 		final int player = p;
 		AlertDialog alertDialog = new AlertDialog.Builder(SetupActivity.this).create();
 		alertDialog.setTitle("Edit Player Name");
-		alertDialog.setMessage("Enter Player " + player + "\'s name:");                
+		alertDialog.setMessage("Enter Player " + (player+1) + "\'s name:");                
 		// Set an EditText view to get name   
 		final EditText input = new EditText(this); 
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+		input.setHint("Player " + (player+1));
 		input.setText(player_names[player]);
 		int position = input.length();
 		Editable etext = input.getText();
@@ -203,6 +209,10 @@ public class SetupActivity extends Activity implements OnClickListener {
 				String name = input.getText().toString();
 				player_names[player] = name;
 				button_players[player].setText(name);
+			} });
+		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// empty
 			} });
 		alertDialog.show();
 	}
@@ -327,8 +337,12 @@ public class SetupActivity extends Activity implements OnClickListener {
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_NUM_PLAYERS", num_players).commit();
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_STARTING_LIFE", starting_life).commit();
 		
-		// TODO: Save chosen mana color
-		String icons = "" + mana_color[MainActivity.PLAYER_1] + ',' + mana_color[MainActivity.PLAYER_2] + ',' + mana_color[MainActivity.PLAYER_3] + ',' + mana_color[MainActivity.PLAYER_4];
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < mana_color.length; i++)
+			sb.append(mana_color[i] + ',');
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_PLAYER_ICONS", sb.toString());
+		
+		Log.d("SetupActivity", "onDestroy(): updated SharedPreferences");
 		
 		super.onDestroy();
 	}
