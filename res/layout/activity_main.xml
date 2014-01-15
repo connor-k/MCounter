@@ -29,7 +29,7 @@
             <SeekBar
                 android:id="@+id/progressbar_main_p2_life"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:thumb="@drawable/white_mana"
+                android:thumb="@drawable/mana_white"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:max="1000"
@@ -115,7 +115,7 @@
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
                 android:progress="0"
-                android:thumb="@drawable/white_mana" />
+                android:thumb="@drawable/mana_white" />
 
             <TextView
                 android:id="@+id/textview_main_p1_life"

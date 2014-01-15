@@ -16,6 +16,12 @@
     <string name="button_setup_p4_label">Player 4</string>
     <string name="setup_initial_life">Initial Life: 20</string>
     <string name="button_setup_continue_label">Continue Previous Game</string>
+    <string name="button_setup_mana_submit_label">Save</string>
+    <string name="mana_white">&#32;&#32;White</string>
+    <string name="mana_blue">&#32;&#32;Blue</string>
+    <string name="mana_black">&#32;&#32;Black</string>
+    <string name="mana_red">&#32;&#32;Red</string>
+    <string name="mana_green">&#32;&#32;Green</string>
     <!-- MainActivity -->
     <string name="button_plus1">+1</string>
     <string name="button_plus5">+5</string>

@@ -33,8 +33,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static String KEY_NUM_PLAYERS = "mtg_num_players";
 	public static String KEY_PLAYER_NAMES = "mtg_player_names";
 	public static String KEY_STARTING_LIFE = "mtg_starting_life";
+	public static String KEY_CONTINUE_GAME = "mtg_continue_game";
 
-	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1, PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
+	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
+	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
 	private int[] life;
 	private boolean[] alive = {false, false, false, false};
 	private String[] PLAYER_NAMES;
