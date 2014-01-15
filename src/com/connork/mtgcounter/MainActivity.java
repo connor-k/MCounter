@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,16 +31,18 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 	// Some keys for passing information from setup
-	public static String KEY_NUM_PLAYERS = "mtg_num_players";
-	public static String KEY_PLAYER_NAMES = "mtg_player_names";
-	public static String KEY_STARTING_LIFE = "mtg_starting_life";
-	public static String KEY_CONTINUE_GAME = "mtg_continue_game";
+	public static String KEY_NUM_PLAYERS	= "mtg_num_players";
+	public static String KEY_PLAYER_NAMES	= "mtg_player_names";
+	public static String KEY_STARTING_LIFE	= "mtg_starting_life";
+	public static String KEY_PLAYER_ICONS	= "mtg_player_icons"; // TODO
+	public static String KEY_CONTINUE_GAME	= "mtg_continue_game";
 
 	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
 	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
 	private int[] life;
 	private boolean[] alive = {false, false, false, false};
 	private String[] PLAYER_NAMES;
+	private int[] PLAYER_ICONS;
 	private TextView[] TEXTVIEW_LIFE;
 	private SeekBar[] PROGRESSBAR_LIFE;
 	private Button[] BUTTON_LIFE = new Button[8];
@@ -50,15 +53,18 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Get passed information and initialize player names, life, etc
+		// Get passed information and initialize player names, life, etc.
 		NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
 		String[] names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
 		STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
+		int[] icons = getIntent().getIntArrayExtra(KEY_PLAYER_ICONS);
 
 		PLAYER_NAMES = new String[NUM_PLAYERS];
+		PLAYER_ICONS = new int[NUM_PLAYERS];
 		life = new int[NUM_PLAYERS];
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			PLAYER_NAMES[i] = names[i];
+			PLAYER_ICONS[i] = icons[i];
 			life[i] = STARTING_LIFE;
 			alive[i] = true;
 		}
@@ -86,6 +92,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Player 4's life text and progressbar
 			TEXTVIEW_LIFE[PLAYER_4] = (TextView)findViewById(R.id.textview_main_p4_life);
 			PROGRESSBAR_LIFE[PLAYER_4] = (SeekBar) findViewById(R.id.progressbar_main_p4_life);
+			// Set mana icon
+			PROGRESSBAR_LIFE[PLAYER_4].setThumb(getManaIcon(PLAYER_4));
 			// The radio group to select who the +-life buttons route to (player 2 or 4) 
 			radio_button[PLAYER_2] = (RadioButton) findViewById(R.id.radio_main_p2);
 			radio_button[PLAYER_2].setText(PLAYER_NAMES[1]);
@@ -144,6 +152,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Player 3's life text and progressbar
 			TEXTVIEW_LIFE[PLAYER_3] = (TextView)findViewById(R.id.textview_main_p3_life);
 			PROGRESSBAR_LIFE[PLAYER_3] = (SeekBar) findViewById(R.id.progressbar_main_p3_life);
+			// Set mana icon
+			PROGRESSBAR_LIFE[PLAYER_3].setThumb(getManaIcon(PLAYER_3));
 			// The radio group to select who the +-life buttons route to (player 1 or 3) 
 			radio_button[PLAYER_1] = (RadioButton) findViewById(R.id.radio_main_p1);
 			radio_button[PLAYER_1].setText(PLAYER_NAMES[PLAYER_1]);
@@ -216,8 +226,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Setup Player 1 and 2's life text and progressbars
 			TEXTVIEW_LIFE[PLAYER_1] = (TextView)findViewById(R.id.textview_main_p1_life);
 			TEXTVIEW_LIFE[PLAYER_2] = (TextView)findViewById(R.id.textview_main_p2_life);
+			
 			PROGRESSBAR_LIFE[PLAYER_1] = (SeekBar) findViewById(R.id.progressbar_main_p1_life);
+			// Set mana icon
+			PROGRESSBAR_LIFE[PLAYER_1].setThumb(getManaIcon(PLAYER_1));
+			
 			PROGRESSBAR_LIFE[PLAYER_2] = (SeekBar) findViewById(R.id.progressbar_main_p2_life);
+			// Set mana icon
+			PROGRESSBAR_LIFE[PLAYER_2].setThumb(getManaIcon(PLAYER_2));
 			
 			// Animate filling the life bars
 			for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
@@ -324,6 +340,32 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		//TODO Continue game
 		//TODO Activity lifecycle stuff
+	}
+
+	// TODO: This is a hack to get the mana icons, needs more efficient method later
+	private Drawable getManaIcon(int player) {
+		Drawable output = null;
+		switch (PLAYER_ICONS[player]) {
+			case 0:
+				output = getResources().getDrawable(R.drawable.mana_colorless);
+				break;
+			case 1:
+				output = getResources().getDrawable(R.drawable.mana_white);
+				break;
+			case 2:
+				output = getResources().getDrawable(R.drawable.mana_blue);
+				break;
+			case 3:
+				output = getResources().getDrawable(R.drawable.mana_black);
+				break;
+			case 4:
+				output = getResources().getDrawable(R.drawable.mana_red);
+				break;
+			case 5:
+				output = getResources().getDrawable(R.drawable.mana_green);
+				break;
+			}
+		return output;
 	}
 
 	/** Update life for a specific player */
