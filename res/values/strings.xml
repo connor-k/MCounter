@@ -17,6 +17,7 @@
     <string name="setup_initial_life">Initial Life: 20</string>
     <string name="button_setup_continue_label">Continue Previous Game</string>
     <string name="button_setup_mana_submit_label">Save</string>
+    <string name="mana_colorless">&#32;&#32;Colorless</string>
     <string name="mana_white">&#32;&#32;White</string>
     <string name="mana_blue">&#32;&#32;Blue</string>
     <string name="mana_black">&#32;&#32;Black</string>

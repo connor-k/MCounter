@@ -10,10 +10,18 @@
         android:padding="16dp" >
 
         <RadioButton
-            android:id="@+id/radio_setup_mana_white"
+            android:id="@+id/radio_setup_mana_colorless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:drawableLeft="@drawable/mana_colorless"
+            android:padding="8dp"
+            android:text="@string/mana_colorless" />
+        
+        <RadioButton
+            android:id="@+id/radio_setup_mana_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_white"
             android:padding="8dp"
             android:text="@string/mana_white" />
