@@ -16,7 +16,7 @@ public class Prefs extends PreferenceActivity
 	private static final String OPT_IMMERSIVE_MODE = "immersive_mode";
 	private static final boolean OPT_IMMERSIVE_MODE_DEF = true;
 	private static final String OPT_LIFE_COUNTER_TOUCHABLE = "life_counter_touchable";
-	private static final boolean OPT_LIFE_COUNTER_TOUCHABLE_DEF = false;
+	private static final boolean OPT_LIFE_COUNTER_TOUCHABLE_DEF = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
