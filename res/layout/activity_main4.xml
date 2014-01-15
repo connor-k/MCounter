@@ -60,7 +60,7 @@
                         android:paddingRight="16dp"
                         android:paddingTop="8dp"
                         android:progress="0"
-                        android:thumb="@drawable/white_mana" />
+                        android:thumb="@drawable/mana_white" />
 
                     <SeekBar
                         android:id="@+id/progressbar_main_p4_life"
@@ -73,7 +73,7 @@
                         android:paddingRight="16dp"
                         android:paddingTop="8dp"
                         android:progress="0"
-                        android:thumb="@drawable/white_mana" />
+                        android:thumb="@drawable/mana_white" />
                 </TableRow>
 
                 <TableRow
@@ -211,7 +211,7 @@
                         android:paddingRight="16dp"
                         android:paddingTop="8dp"
                         android:progress="0"
-                        android:thumb="@drawable/white_mana" />
+                        android:thumb="@drawable/mana_white" />
 
                     <SeekBar
                         android:id="@+id/progressbar_main_p3_life"
@@ -224,7 +224,7 @@
                         android:paddingRight="16dp"
                         android:paddingTop="8dp"
                         android:progress="0"
-                        android:thumb="@drawable/white_mana" />
+                        android:thumb="@drawable/mana_white" />
                 </TableRow>
 
                 <TableRow
