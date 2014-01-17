@@ -23,9 +23,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
@@ -254,10 +254,38 @@ public class SetupActivity extends Activity implements OnClickListener {
 
 	/** Dialog to set a player's mana color */
 	private void editPlayerMana(int p) {
+		// Set up the radio group in the dialog. Toggle the current mana color they have
 		final int player = p;
+		
+		ScrollView scrollView = (ScrollView) getLayoutInflater().inflate(R.layout.alertdialog_setup_mana, null);
+		
+		final RadioGroup radioGroup = (RadioGroup) scrollView.findViewById(R.id.radiogroup_setup_mana);
+		
+		switch (mana_color[player]) {
+		case MANA_COLORLESS:
+			radioGroup.check(R.id.radio_setup_mana_colorless);
+			break;
+		case MANA_WHITE:
+			radioGroup.check(R.id.radio_setup_mana_white);
+			break;
+		case MANA_BLUE:
+			radioGroup.check(R.id.radio_setup_mana_blue);
+			break;
+		case MANA_BLACK:
+			radioGroup.check(R.id.radio_setup_mana_black);
+			break;
+		case MANA_RED:
+			radioGroup.check(R.id.radio_setup_mana_red);
+			break;
+		case MANA_GREEN:
+			radioGroup.check(R.id.radio_setup_mana_green);
+			break;
+		}
+
+		// Set up the dialog
 		final AlertDialog alertDialog = new AlertDialog.Builder(SetupActivity.this).create();
 		alertDialog.setTitle("Choose " + player_names[player] + "\'s Mana Color");
-		alertDialog.setView(getLayoutInflater().inflate(R.layout.alertdialog_setup_mana, null));
+		alertDialog.setView(scrollView);
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				RadioGroup radioGroup = (RadioGroup)alertDialog.findViewById(R.id.radiogroup_setup_mana);
