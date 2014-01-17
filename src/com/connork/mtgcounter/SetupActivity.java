@@ -1,5 +1,7 @@
 package com.connork.mtgcounter;
 
+import java.util.Random;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -334,7 +336,30 @@ public class SetupActivity extends Activity implements OnClickListener {
 			//TODO pass mana color
 			startActivity(intent);
 			return true;
-		case R.id.menu_main_settings:
+		case R.id.menu_setup_shuffle_players:
+			// Shuffle the order of players
+			for (int i = 0; i < num_players; i++) {
+				// Get random index
+				Random numgen = new Random();
+				int index = numgen.nextInt(num_players);
+				
+				// Swap name
+				String temp_name = player_names[index];
+				player_names[index] = player_names[i];
+				player_names[i] = temp_name;
+				
+				// Swap mana color
+				int temp_mana = mana_color[index];
+				mana_color[index] = mana_color[i];
+				mana_color[i] = temp_mana;
+			}
+			// Update the views
+			for (int i = 0; i < num_players; i++) {
+				button_players[i].setText(player_names[i]);
+				setManaColor(i, mana_color[i]);
+			}
+			return true;
+		case R.id.menu_setup_settings:
 			Intent intent2 = new Intent(SetupActivity.this, Prefs.class);
 			startActivity(intent2);
 			return true;
