@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,12 +25,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
 	private int num_players, starting_life;
 	private final int MANA_COLORLESS = 0, MANA_WHITE = 1, MANA_BLUE = 2, MANA_BLACK = 3, MANA_RED = 4, MANA_GREEN = 5;
-	private int[] mana_color = {MANA_COLORLESS, MANA_COLORLESS, MANA_COLORLESS, MANA_COLORLESS}; // The mana color code for each player
+	private int[] mana_color = new int[4]; // The mana color code for each player
 	private String player_names[] = new String[4];
 	private Button button_players[] = new Button[4], button_mana[] = new Button[4];
 	private Button button_continue; //TODO
@@ -93,9 +93,11 @@ public class SetupActivity extends Activity implements OnClickListener {
 				for (int i = 0; i < 4; i++) {
 					if (i < num_players) {
 						button_players[i].setEnabled(true);
+						button_mana[i].setEnabled(true);
 					}
 					else {
 						button_players[i].setEnabled(false);
+						button_mana[i].setEnabled(false);
 					}
 				}
 			}
@@ -135,23 +137,26 @@ public class SetupActivity extends Activity implements OnClickListener {
 			player_names = savedInstanceState.getStringArray("setup_player_names");
 			starting_life = savedInstanceState.getInt("setup_starting_life", 20);
 			mana_color = savedInstanceState.getIntArray("setup_mana_color");
+			for (int i = 0; i < mana_color.length; i++) {
+				setManaColor(i, mana_color[i]);
+			}
 		}
 		else {
 			String names = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_PLAYER_NAMES", "Player 1, Player 2, Player 3, Player 4");
 			player_names = names.split(",");
 			num_players = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_NUM_PLAYERS", 2);
 			starting_life = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_STARTING_LIFE", 20);
-			String icons = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_PLAYER_ICONS", "0,0,0,0");
+			String icons = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_MANA_COLOR", MANA_WHITE + "," + MANA_RED + "," +  MANA_BLUE + "," + MANA_GREEN);
 			String[] iconNums = icons.split(",");
-			for(int a = 0; a < iconNums.length; a++)
-				mana_color[a] = Integer.parseInt(iconNums[a]);
+			for (int i = 0; i < iconNums.length; i++) {
+				setManaColor(i, Integer.parseInt(iconNums[i]));
+			}
 		}
 		// Select the appropriate radio button for how many people are playing
 		radio_button[num_players - 2].toggle();
 		// Set button text to player names
 		for (int i = 0; i < 4; i++) {
 			button_players[i].setText(player_names[i]);
-			setManaColor(i, mana_color[i]);
 		}
 		// Set the initial life progress bar to previous state
 		seekBar.setProgress(starting_life);
@@ -220,29 +225,29 @@ public class SetupActivity extends Activity implements OnClickListener {
 	/** Change a player's mana icon and updates the array of icons */
 	private void setManaColor(int player, int color) {
 		switch (color) {
-		default:
+		case MANA_COLORLESS:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_colorless));
-			mana_color[player] = 0;
+			mana_color[player] = MANA_COLORLESS;
 			break;
 		case MANA_WHITE:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_white));
-			mana_color[player] = 1;
+			mana_color[player] = MANA_WHITE;
 			break;
 		case MANA_BLUE:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_blue));
-			mana_color[player] = 2;
+			mana_color[player] = MANA_BLUE;
 			break;
 		case MANA_BLACK:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_black));
-			mana_color[player] = 3;
+			mana_color[player] = MANA_BLACK;
 			break;
 		case MANA_RED:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_red));
-			mana_color[player] = 4;
+			mana_color[player] = MANA_RED;
 			break;
 		case MANA_GREEN:
 			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_green));
-			mana_color[player] = 5;
+			mana_color[player] = MANA_GREEN;
 			break;
 		}
 	}
@@ -336,14 +341,10 @@ public class SetupActivity extends Activity implements OnClickListener {
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_PLAYER_NAMES", names).commit();
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_NUM_PLAYERS", num_players).commit();
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_STARTING_LIFE", starting_life).commit();
-		
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < mana_color.length; i++)
-			sb.append(mana_color[i] + ',');
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_PLAYER_ICONS", sb.toString());
-		
-		Log.d("SetupActivity", "onDestroy(): updated SharedPreferences");
-		
+		// Save the player mana colors
+		String mana = mana_color[MainActivity.PLAYER_1] + "," + mana_color[MainActivity.PLAYER_2] + "," + mana_color[MainActivity.PLAYER_3] + "," + mana_color[MainActivity.PLAYER_4];
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_MANA_COLOR", mana).commit();
+
 		super.onDestroy();
 	}
 
