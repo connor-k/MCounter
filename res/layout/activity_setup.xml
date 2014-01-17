@@ -124,6 +124,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
+                    android:enabled="false"
                     android:gravity="center_vertical|center_horizontal|left"
                     android:height="32dp"
                     android:maxWidth="32dp"
@@ -150,6 +151,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
+                    android:enabled="false"
                     android:gravity="center_vertical|center_horizontal|left"
                     android:height="32dp"
                     android:maxWidth="32dp"
@@ -165,7 +167,6 @@
                     android:text="@string/button_setup_p4_label" />
             </TableRow>
         </TableLayout>
-
 
         <TextView
             android:id="@+id/textview_setup_initial_life"
