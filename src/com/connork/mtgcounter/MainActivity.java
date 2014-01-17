@@ -18,10 +18,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -41,6 +39,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
 	private int[] life;
 	private boolean[] alive = {false, false, false, false};
+	private boolean game_started;
 	private String[] PLAYER_NAMES;
 	private int[] PLAYER_ICONS;
 	private TextView[] TEXTVIEW_LIFE;
@@ -52,7 +51,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		game_started = false;
+		
 		// Get passed information and initialize player names, life, etc.
 		NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
 		String[] names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
@@ -85,7 +86,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		case 4:
 			// Use the 4-player layout
 			setContentView(R.layout.activity_main4);
-			
+
 			// Set Player 4's name
 			((TextView)findViewById(R.id.textview_main_p4_name)).setText(PLAYER_NAMES[PLAYER_4]);
 
@@ -116,36 +117,29 @@ public class MainActivity extends Activity implements OnClickListener {
 				}
 			});
 			// Check settings to enable/prevent them from sliding the seekbar to change their life.
-			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
-				PROGRESSBAR_LIFE[PLAYER_4].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
-					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			PROGRESSBAR_LIFE[PLAYER_4].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					// Check settings to enable/prevent them from sliding the seekbar to change their life.
+					if (!fromUser || Prefs.getLifeCounterTouchable(MainActivity.this)) {
 						life[PLAYER_4] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
-						updateViews(PLAYER_4, fromUser);
+						updateViews(PLAYER_4);
 					}
+				}
 
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-					}
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-					}
-				});
-			}
-			else {
-				PROGRESSBAR_LIFE[PLAYER_4].setOnTouchListener(new OnTouchListener(){
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						return true;
-					}
-				});
-			}
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+			});
 		case 3:
 			// Use the 3-player layout
 			if (NUM_PLAYERS == 3) {
 				setContentView(R.layout.activity_main3);
 			}
-			
+
 			// Set Player 3's name
 			((TextView)findViewById(R.id.textview_main_p3_name)).setText(PLAYER_NAMES[PLAYER_3]);
 
@@ -176,36 +170,29 @@ public class MainActivity extends Activity implements OnClickListener {
 				}
 			});
 			// Check settings to enable/prevent them from sliding the seekbar to change their life.
-			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
-				PROGRESSBAR_LIFE[PLAYER_3].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
-					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			PROGRESSBAR_LIFE[PLAYER_3].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					// Check settings to enable/prevent them from sliding the seekbar to change their life.
+					if (!fromUser || Prefs.getLifeCounterTouchable(MainActivity.this)) {
 						life[PLAYER_3] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
-						updateViews(PLAYER_3, fromUser);
+						updateViews(PLAYER_3);
 					}
+				}
 
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-					}
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-					}
-				});
-			}
-			else {
-				PROGRESSBAR_LIFE[PLAYER_3].setOnTouchListener(new OnTouchListener(){
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						return true;
-					}
-				});
-			}
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+			});
 		case 2:
 			// Use the 2-player layout
 			if (NUM_PLAYERS == 2) {
 				setContentView(R.layout.activity_main);
 			}
-			
+
 			// Set Player 1 and 2's names
 			((TextView)findViewById(R.id.textview_main_p1_name)).setText(PLAYER_NAMES[PLAYER_1]);
 			((TextView)findViewById(R.id.textview_main_p2_name)).setText(PLAYER_NAMES[PLAYER_2]);
@@ -226,15 +213,15 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Setup Player 1 and 2's life text and progressbars
 			TEXTVIEW_LIFE[PLAYER_1] = (TextView)findViewById(R.id.textview_main_p1_life);
 			TEXTVIEW_LIFE[PLAYER_2] = (TextView)findViewById(R.id.textview_main_p2_life);
-			
+
 			PROGRESSBAR_LIFE[PLAYER_1] = (SeekBar) findViewById(R.id.progressbar_main_p1_life);
 			// Set mana icon
 			PROGRESSBAR_LIFE[PLAYER_1].setThumb(getManaIcon(PLAYER_1));
-			
+
 			PROGRESSBAR_LIFE[PLAYER_2] = (SeekBar) findViewById(R.id.progressbar_main_p2_life);
 			// Set mana icon
 			PROGRESSBAR_LIFE[PLAYER_2].setThumb(getManaIcon(PLAYER_2));
-			
+
 			// Animate filling the life bars
 			for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
 				final int player = i;
@@ -264,66 +251,53 @@ public class MainActivity extends Activity implements OnClickListener {
 				@Override
 				protected void onPostExecute(Void result) {
 					super.onPostExecute(result);
-
+					// Set the seekbar's maxes and progresses to be starting life
 					for (int i = 0; i < NUM_PLAYERS; i++) {
-						TEXTVIEW_LIFE[i].setText(life[i] + " / " + STARTING_LIFE);
-						TEXTVIEW_LIFE[i].setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
 						PROGRESSBAR_LIFE[i].setMax(STARTING_LIFE);
 						PROGRESSBAR_LIFE[i].setProgress(STARTING_LIFE);
 					}
+					// Start checking if players have lost
+					game_started = true;
 				}
 			}.execute();
-			
-			// Check settings to enable/prevent them from sliding the seekbar to change their life.
-			if (Prefs.getLifeCounterTouchable(MainActivity.this)) {
-				// Player 2
-				PROGRESSBAR_LIFE[PLAYER_2].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
-					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+			// Player 2
+			PROGRESSBAR_LIFE[PLAYER_2].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					// Check settings to enable/prevent them from sliding the seekbar to change their life.
+					if (!fromUser || Prefs.getLifeCounterTouchable(MainActivity.this)) {
 						life[PLAYER_2] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
-						updateViews(PLAYER_2, fromUser);
+						updateViews(PLAYER_2);
 					}
+				}
 
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-					}
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-					}
-				});
-				// Player 1
-				PROGRESSBAR_LIFE[PLAYER_1].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
-					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+			});
+			// Player 1
+			PROGRESSBAR_LIFE[PLAYER_1].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
+				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+					// Check settings to enable/prevent them from sliding the seekbar to change their life.
+					if ((!fromUser && !game_started) || (fromUser && Prefs.getLifeCounterTouchable(MainActivity.this))) {
 						life[PLAYER_1] = (int)((double)progress * STARTING_LIFE / seekBar.getMax());
-						updateViews(PLAYER_1, fromUser);
+						updateViews(PLAYER_1);
 					}
+				}
 
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-					}
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+				}
 
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-					}
-					
-				});
-			}
-			else {
-				// Player 2
-				PROGRESSBAR_LIFE[PLAYER_2].setOnTouchListener(new OnTouchListener(){
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						return true;
-					}
-				});
-				// Player 1
-				PROGRESSBAR_LIFE[PLAYER_1].setOnTouchListener(new OnTouchListener(){
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						return true;
-					}
-				});
-			}
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+
+			});
 			break;
 		}
 
@@ -346,31 +320,30 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Drawable getManaIcon(int player) {
 		Drawable output = null;
 		switch (PLAYER_ICONS[player]) {
-			case 0:
-				output = getResources().getDrawable(R.drawable.mana_colorless);
-				break;
-			case 1:
-				output = getResources().getDrawable(R.drawable.mana_white);
-				break;
-			case 2:
-				output = getResources().getDrawable(R.drawable.mana_blue);
-				break;
-			case 3:
-				output = getResources().getDrawable(R.drawable.mana_black);
-				break;
-			case 4:
-				output = getResources().getDrawable(R.drawable.mana_red);
-				break;
-			case 5:
-				output = getResources().getDrawable(R.drawable.mana_green);
-				break;
-			}
+		case 0:
+			output = getResources().getDrawable(R.drawable.mana_colorless);
+			break;
+		case 1:
+			output = getResources().getDrawable(R.drawable.mana_white);
+			break;
+		case 2:
+			output = getResources().getDrawable(R.drawable.mana_blue);
+			break;
+		case 3:
+			output = getResources().getDrawable(R.drawable.mana_black);
+			break;
+		case 4:
+			output = getResources().getDrawable(R.drawable.mana_red);
+			break;
+		case 5:
+			output = getResources().getDrawable(R.drawable.mana_green);
+			break;
+		}
 		return output;
 	}
 
 	/** Update life for a specific player */
-	void updateViews(int p, boolean gameStarted) {
-		final int player = p;
+	void updateViews(int player) {
 		TEXTVIEW_LIFE[player].setText(life[player] + " / " + STARTING_LIFE);
 
 		// Color the text based on life
@@ -391,8 +364,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			color = android.R.color.holo_red_dark;
 		}
 		TEXTVIEW_LIFE[player].setTextColor(getResources().getColor(color));
-		
-		if(gameStarted) {
+
+		if (game_started) {
 			for (int i = 0; i < life.length; i++) {
 				if (life[i] <= 0) {
 					// If someone has 0 or less life, make a gg dialog and mark them as dead (avoid multiple dialogs for same person).
@@ -415,49 +388,43 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Adjust the selected player's life, then update the textview
 			life[selected_p13] += 1;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13, true);
+			updateViews(selected_p13);
 			break;
 		case R.id.button_main_p1_lifep5:
 			life[selected_p13] += 5;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13, true);
+			updateViews(selected_p13);
 			break;
 		case R.id.button_main_p1_lifem1:
 			life[selected_p13] -= 1;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13, true);
+			updateViews(selected_p13);
 			break;
 		case R.id.button_main_p1_lifem5:
 			life[selected_p13] -= 5;
 			PROGRESSBAR_LIFE[selected_p13].setProgress(life[selected_p13]);
-			updateViews(selected_p13, true);
+			updateViews(selected_p13);
 			break;
 		case R.id.button_main_p2_lifep1:
 			life[selected_p24] += 1;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24, true);
+			updateViews(selected_p24);
 			break;
 		case R.id.button_main_p2_lifep5:
 			life[selected_p24] += 5;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24, true);
+			updateViews(selected_p24);
 			break;
 		case R.id.button_main_p2_lifem1:
 			life[selected_p24] -= 1;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24, true);
+			updateViews(selected_p24);
 			break;
 		case R.id.button_main_p2_lifem5:
 			life[selected_p24] -= 5;
 			PROGRESSBAR_LIFE[selected_p24].setProgress(life[selected_p24]);
-			updateViews(selected_p24, true);
+			updateViews(selected_p24);
 			break;
-		}
-		for (int i = 0; i < life.length; i++) {
-			if (life[i] <= 0) {
-				gameOver(i); // careful for off-by-one
-				break;
-			}
 		}
 	}
 
