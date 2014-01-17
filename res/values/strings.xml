@@ -33,6 +33,7 @@
     <string name="menu_working_label">Working…</string>
     <string name="menu_settings_label">Settings</string>
     <string name="menu_shuffle_players_label">Shuffle Players</string>
+    <string name="menu_random_player_label">Pick Random Player</string>
     <!-- Settings -->
     <string name="prefs_title">MTGCounter Settings</string>
     <string name="immersive_mode_title">Fullscreen</string>

@@ -1,5 +1,7 @@
 package com.connork.mtgcounter;
 
+import java.util.Random;
+
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
@@ -475,6 +477,21 @@ public class MainActivity extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
+			return true;
+		case R.id.menu_main_random_player:
+			// Get random index
+			Random numgen = new Random();
+			int index = numgen.nextInt(NUM_PLAYERS);
+			
+			// Make an AlertDialog to show the randomly chosen player
+			AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+			alertDialog.setTitle("Random Player:");
+			alertDialog.setMessage(PLAYER_NAMES[index] + ".");
+			alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					//Dismiss
+				} });
+			alertDialog.show();
 			return true;
 		case R.id.menu_main_settings:
 			Intent intent = new Intent(MainActivity.this, Prefs.class);
