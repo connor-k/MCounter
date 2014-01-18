@@ -21,34 +21,56 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
-        <RadioGroup
-            android:id="@+id/radiogroup_setup_number_players"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="4dp" >
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-            <RadioButton
-                android:id="@+id/radio_setup_2p"
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/setup_default_number_players" />
+                android:weightSum="1.0" >
 
-            <RadioButton
-                android:id="@+id/radio_setup_3p"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:text="@string/setup_3_players" />
+                <RadioGroup
+                    android:id="@+id/radiogroup_setup_number_players"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:orientation="horizontal"
+                    android:padding="4dp"
+                    android:paddingRight="8dp" >
 
-            <RadioButton
-                android:id="@+id/radio_setup_4p"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/setup_4_players" />
-        </RadioGroup>
+                    <RadioButton
+                        android:id="@+id/radio_setup_2p"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/setup_default_number_players" />
+
+                    <RadioButton
+                        android:id="@+id/radio_setup_3p"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:text="@string/setup_3_players" />
+
+                    <RadioButton
+                        android:id="@+id/radio_setup_4p"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setup_4_players" />
+                </RadioGroup>
+
+                <CheckBox
+                    android:id="@+id/checkbox_setup_team_together"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.5"
+                    android:defaultValue="false"
+                    android:gravity="center_vertical"
+                    android:text="@string/checkbox_setup_team_together_label" />
+            </TableRow>
+        </TableLayout>
 
         <TextView
             android:id="@android:id/text1"

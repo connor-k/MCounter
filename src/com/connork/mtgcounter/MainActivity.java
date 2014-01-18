@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static String KEY_NUM_PLAYERS	= "mtg_num_players";
 	public static String KEY_PLAYER_NAMES	= "mtg_player_names";
 	public static String KEY_STARTING_LIFE	= "mtg_starting_life";
-	public static String KEY_PLAYER_ICONS	= "mtg_player_icons"; // TODO
+	public static String KEY_MANA_COLOR	= "mtg_player_icons";
 	public static String KEY_CONTINUE_GAME	= "mtg_continue_game";
 
 	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
 		String[] names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
 		STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
-		int[] icons = getIntent().getIntArrayExtra(KEY_PLAYER_ICONS);
+		int[] icons = getIntent().getIntArrayExtra(KEY_MANA_COLOR);
 
 		PLAYER_NAMES = new String[NUM_PLAYERS];
 		PLAYER_ICONS = new int[NUM_PLAYERS];
