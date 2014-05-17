@@ -2,7 +2,7 @@
 <resources>
 
     <!-- App -->
-    <string name="app_name">MTGCounter</string>
+    <string name="app_name">MCounter</string>
     <!-- SetupActivity -->
     <string name="setup">Setup</string>
     <string name="setup_number_players">Number of Players:</string>
@@ -36,7 +36,7 @@
     <string name="menu_shuffle_players_label">Shuffle Players</string>
     <string name="menu_random_player_label">Pick Random Player</string>
     <!-- Settings -->
-    <string name="prefs_title">MTGCounter Settings</string>
+    <string name="prefs_title">MCounter Settings</string>
     <string name="immersive_mode_title">Fullscreen</string>
     <string name="immersive_mode_summaryOn">The counter activity will be fullscreen.</string>
     <string name="immersive_mode_summaryOff">The counter activity will not be fullscreen.</string>

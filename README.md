@@ -1,5 +1,5 @@
-# MTGCounter
+# MCounter
 
-MTGCounter is a life counter app for ccg's such as Magic the Gathering.
+MCounter is a life counter app for ccg's.
 
-[Download apk](https://github.com/connor-k/MTGCounter/releases)
+[Download apk](https://github.com/connor-k/MCounter/releases)
