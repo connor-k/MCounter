@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Shader;
@@ -17,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,6 +38,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static String KEY_STARTING_LIFE	= "mtg_starting_life";
 	public static String KEY_MANA_COLOR	= "mtg_player_icons";
 	public static String KEY_CONTINUE_GAME	= "mtg_continue_game";
+	public static String KEY_GAME_IN_PROGRESS = "mtg_game_in_progress";
+	public static String KEY_LIFE	= "mtg_life";
+	public static String KEY_ALIVE	= "mtg_alive";
 
 	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
 	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
@@ -57,19 +62,36 @@ public class MainActivity extends Activity implements OnClickListener {
 		game_started = false;
 		
 		// Get passed information and initialize player names, life, etc.
-		NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
-		String[] names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
-		STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
-		int[] icons = getIntent().getIntArrayExtra(KEY_MANA_COLOR);
+		String[] names;
+		int[] icons;
+		// New game first:
+		final boolean continue_game = getIntent().getIntExtra(KEY_CONTINUE_GAME, 0) == 1;
+		if (!continue_game) {
+			NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
+			names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
+			STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
+			icons = getIntent().getIntArrayExtra(KEY_MANA_COLOR);
+			life = new int[NUM_PLAYERS];
+			for (int i = 0; i < NUM_PLAYERS; ++i) {
+				life[i] = STARTING_LIFE;
+				alive[i] = true;
+			}
+		}
+		else {
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+			NUM_PLAYERS = pref.getInt(KEY_NUM_PLAYERS, 2);
+			names = namesPrefConvert(pref.getString(KEY_PLAYER_NAMES, ",,,"), NUM_PLAYERS);
+			STARTING_LIFE = pref.getInt(KEY_STARTING_LIFE, 20);
+			icons = iconsPrefConvert(pref.getString(KEY_MANA_COLOR, "0000"), NUM_PLAYERS);
+			life = lifePrefConvert(pref.getString(KEY_LIFE, "20,20,20,20"), NUM_PLAYERS);
+			alive = alivePrefConvert(pref.getString(KEY_ALIVE, "1111"), NUM_PLAYERS);
+		}
 
 		PLAYER_NAMES = new String[NUM_PLAYERS];
 		PLAYER_ICONS = new int[NUM_PLAYERS];
-		life = new int[NUM_PLAYERS];
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			PLAYER_NAMES[i] = names[i];
 			PLAYER_ICONS[i] = icons[i];
-			life[i] = STARTING_LIFE;
-			alive[i] = true;
 		}
 
 		//TODO Restore last life state if possible
@@ -224,39 +246,49 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Set mana icon
 			PROGRESSBAR_LIFE[PLAYER_2].setThumb(getManaIcon(PLAYER_2));
 
-			// Animate filling the life bars
-			for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
-				final int player = i;
-				ValueAnimator anim = ValueAnimator.ofInt(0, PROGRESSBAR_LIFE[player].getMax());
-				anim.setDuration(3000);
-				anim.addUpdateListener(new AnimatorUpdateListener() {
-					@Override
-					public void onAnimationUpdate(ValueAnimator animation) {
-						int animProgress = (Integer) animation.getAnimatedValue();
-						PROGRESSBAR_LIFE[player].setProgress(animProgress);
-					}
-				});
-				anim.setStartDelay(300);
-				anim.start();
+			// Animate filling the life bars if new game
+			if (!continue_game) {
+				for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
+					final int player = i;
+					ValueAnimator anim = ValueAnimator.ofInt(0, PROGRESSBAR_LIFE[player].getMax()/life[player]*STARTING_LIFE);
+					anim.setDuration(3000);
+					anim.addUpdateListener(new AnimatorUpdateListener() {
+						@Override
+						public void onAnimationUpdate(ValueAnimator animation) {
+							int animProgress = (Integer) animation.getAnimatedValue();
+							PROGRESSBAR_LIFE[player].setProgress(animProgress);
+						}
+					});
+					anim.setStartDelay(300);
+					anim.start();
+				}
 			}
+			else {
+				for (int i = 0; i < PROGRESSBAR_LIFE.length; ++i) {
+					PROGRESSBAR_LIFE[i].setProgress(life[i]);
+				}
+			}
+
 			// Make life text visible after the animation, and set max progress to initial life
 			new AsyncTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
-					try {
-						Thread.sleep(3300);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					if (!continue_game) {
+						try {
+							Thread.sleep(3300);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 					return null;
 				}
 				@Override
 				protected void onPostExecute(Void result) {
 					super.onPostExecute(result);
-					// Set the seekbar's maxes and progresses to be starting life
+					// Set the seekbar's maxes and progresses to be starting life of the player
 					for (int i = 0; i < NUM_PLAYERS; i++) {
 						PROGRESSBAR_LIFE[i].setMax(STARTING_LIFE);
-						PROGRESSBAR_LIFE[i].setProgress(STARTING_LIFE);
+						PROGRESSBAR_LIFE[i].setProgress(life[i]);
 					}
 					// Start checking if players have lost
 					game_started = true;
@@ -314,7 +346,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		// Keep screen on
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		//TODO Continue game
+		// Add flag to continue this game
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean(KEY_GAME_IN_PROGRESS, true).commit();
 		//TODO Activity lifecycle stuff
 	}
 
@@ -368,15 +401,22 @@ public class MainActivity extends Activity implements OnClickListener {
 		TEXTVIEW_LIFE[player].setTextColor(getResources().getColor(color));
 
 		if (game_started) {
+			int alive_count = 0; // For final winner dialog
 			for (int i = 0; i < life.length; i++) {
 				if (life[i] <= 0) {
 					// If someone has 0 or less life, make a gg dialog and mark them as dead (avoid multiple dialogs for same person).
 					if (alive[i]) {
+						++alive_count;
 						alive[i] = false;
 						gameOver(i);
 						break;
 					}
 				}
+			}
+			if (alive_count == 1) {
+				//TODO do something special
+				// Set continue flag to false
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean(KEY_GAME_IN_PROGRESS, false).commit();
 			}
 		}
 	}
@@ -500,18 +540,99 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	/* Convert String to String array of player names */
+	//TODO Note: this can be broken is a player has a comma in their name...
+	String[] namesPrefConvert(String names, int n) {
+		String[] s = names.split(",", n);
+		return s;
+	}
+	
+	/* Convert String[] to String of player names */
+	String namesPrefConvert(String[] names) {
+		String s = "";
+		for (int i = 0; i < names.length; ++i) {
+			s += names[i] + (i != names.length - 1 ? "," : "");
+		}
+		return s;
+	}
+	
+	/* Convert icons string to int[] */
+	int[] iconsPrefConvert(String icons, int n) {
+		int[] ic = new int[n];
+		for (int i = 0; i < n; ++i) {
+			ic[i] = icons.charAt(i) - '0';
+		}
+		return ic;
+	}
+	
+	/* Convert icons int[] to string */
+	String iconsPrefConvert(int[] icons) {
+		String s = "";
+		for (int i = 0; i < icons.length; ++i) {
+			s += "" + icons[i];
+		}
+		return s;
+	}
+	
+	/* Convert life string to int[] */
+	int[] lifePrefConvert(String life, int n) {
+		String[] temp = life.split(",", n);
+		int[] li = new int[n];
+		for (int i = 0; i < n; ++i) {
+			li[i] = Integer.parseInt(temp[i]);
+		}
+		return li;
+	}
+	
+	/* Convert life int[] to string */
+	String lifePrefConvert(int[] life) {
+		String s = "";
+		for (int i = 0; i < life.length; ++i) {
+			s += Integer.toString(life[i]) + (i != life.length - 1 ? ',' : "");
+		}
+		return s;
+	}
+	
+	/* Convert alive string to boolean[] */
+	boolean[] alivePrefConvert(String alive, int n) {
+		boolean[] al = new boolean[n];
+		for (int i = 0; i < al.length; ++i) {
+			al[i] = (alive.charAt(i) == '1');
+		}
+		return al;
+	}
+	
+	/* Convert alive boolean[] to string */
+	String alivePrefConvert(boolean[] life) {
+		String s = "";
+		for (int i = 0; i < life.length; ++i) {
+			s += (life[i] ? '1' : '0');
+		}
+		return s;
+	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
+		//TODO others, remove configChanges from manifest
 		outState.putIntArray("main_life", life);
 	}
 
 	@Override
 	public void onPause() {
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		
+		// Save for continue game
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		pref.edit().putInt(KEY_NUM_PLAYERS, NUM_PLAYERS).commit();
+		pref.edit().putString(KEY_PLAYER_NAMES, namesPrefConvert(PLAYER_NAMES)).commit();
+		pref.edit().putInt(KEY_STARTING_LIFE, STARTING_LIFE).commit();
+		pref.edit().putString(KEY_MANA_COLOR, iconsPrefConvert(PLAYER_ICONS)).commit();
+		pref.edit().putString(KEY_LIFE, lifePrefConvert(life)).commit();
+		pref.edit().putString(KEY_ALIVE, alivePrefConvert(alive)).commit();
+		
 		super.onPause();
 	}
 

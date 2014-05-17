@@ -353,12 +353,31 @@ public class SetupActivity extends Activity implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_setup_done:
-			Intent intent = new Intent(SetupActivity.this, MainActivity.class);
+			final Intent intent = new Intent(SetupActivity.this, MainActivity.class);
 			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, num_players);
 			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, player_names);
 			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			intent.putExtra(MainActivity.KEY_MANA_COLOR, mana_color);
-			startActivity(intent);
+			// Give option to continue previous game if possible
+			if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) ) {
+				String[] options = {"Continue Game", "Create New Game"};
+				new AlertDialog.Builder(this)
+				.setTitle("Continue Game?")
+				.setItems(options, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialoginterface, int i) {
+						if (i == 0) {
+							intent.putExtra(MainActivity.KEY_CONTINUE_GAME, 1);
+						}
+						else {
+							intent.putExtra(MainActivity.KEY_CONTINUE_GAME, 0);
+						}
+						startActivity(intent);
+					}
+				}).show();
+			}
+			else {
+				startActivity(intent);
+			}
 			return true;
 		case R.id.menu_setup_shuffle_players:
 			// Shuffle the order of players
