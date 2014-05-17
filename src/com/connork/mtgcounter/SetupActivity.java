@@ -37,7 +37,6 @@ public class SetupActivity extends Activity implements OnClickListener {
 	private int[] mana_color = new int[4]; // The mana color code for each player
 	private String player_names[] = new String[4];
 	private Button button_players[] = new Button[4], button_mana[] = new Button[4];
-	private Button button_continue; //TODO
 	private CheckBox checkbox_team_together;
 	private RadioGroup radio_group;
 	private RadioButton radio_button[] = new RadioButton[3];
