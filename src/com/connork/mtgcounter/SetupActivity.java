@@ -1,5 +1,6 @@
 package com.connork.mtgcounter;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import android.app.ActionBar;
@@ -7,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Shader;
@@ -340,6 +342,17 @@ public class SetupActivity extends Activity implements OnClickListener {
 			} });
 		alertDialog.show();
 	}
+	
+	/* Return true if there's a valid game to continue */
+	Boolean checkForContinue() {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
+		int saved_num_players = pref.getInt(MainActivity.KEY_NUM_PLAYERS, -1);
+		String[] temp_player_names = Arrays.copyOf(player_names, num_players);
+		Arrays.sort(temp_player_names); // Don't care about order for equality, so sort both
+		String[] saved_player_names = pref.getString(MainActivity.KEY_PLAYER_NAMES, ",,,").split(",", saved_num_players);
+		Arrays.sort(saved_player_names);
+		return pref.getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) && saved_num_players == num_players && Arrays.equals(temp_player_names, saved_player_names) && starting_life == pref.getInt(MainActivity.KEY_STARTING_LIFE, -1);
+	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		this.optionsMenu = menu;
@@ -358,8 +371,8 @@ public class SetupActivity extends Activity implements OnClickListener {
 			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, player_names);
 			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			intent.putExtra(MainActivity.KEY_MANA_COLOR, mana_color);
-			// Give option to continue previous game if possible
-			if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) ) {
+			// Give option to continue previous game if there's one to continue and the players/starting life is the same
+			if (checkForContinue()) {
 				String[] options = {"Continue Game", "Create New Game"};
 				new AlertDialog.Builder(this)
 				.setTitle("Continue Game?")

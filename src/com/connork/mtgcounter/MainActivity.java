@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		// The switch has no breaks, so each case sets up that player number (with case 2 setting up players 1 and 2)
 		//TODO make landscape layouts, tablet ui?
 		switch (NUM_PLAYERS) {
-		case 4:
+		case 4: 
 			// Use the 4-player layout
 			setContentView(R.layout.activity_main4);
 
