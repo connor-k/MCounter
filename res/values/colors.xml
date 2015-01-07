@@ -1,5 +1,9 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
+    <color name="primary">#1e5570</color>
+    <color name="primary_dark">#104863</color>
+    <color name="accent">#009688</color>
+    <color name="ripple">#95cade</color>
 
 </resources>
