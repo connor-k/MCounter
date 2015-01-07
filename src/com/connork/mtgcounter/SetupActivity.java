@@ -262,27 +262,27 @@ public class SetupActivity extends Activity implements OnClickListener {
 	private void setManaColor(int player, int color) {
 		switch (color) {
 		case MANA_COLORLESS:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_colorless));
+			button_mana[player].setBackgroundResource(R.drawable.mana_colorless);
 			mana_color[player] = MANA_COLORLESS;
 			break;
 		case MANA_WHITE:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_white));
+			button_mana[player].setBackgroundResource(R.drawable.mana_white);
 			mana_color[player] = MANA_WHITE;
 			break;
 		case MANA_BLUE:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_blue));
+			button_mana[player].setBackgroundResource(R.drawable.mana_blue);
 			mana_color[player] = MANA_BLUE;
 			break;
 		case MANA_BLACK:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_black));
+			button_mana[player].setBackgroundResource(R.drawable.mana_black);
 			mana_color[player] = MANA_BLACK;
 			break;
 		case MANA_RED:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_red));
+			button_mana[player].setBackgroundResource(R.drawable.mana_red);
 			mana_color[player] = MANA_RED;
 			break;
 		case MANA_GREEN:
-			button_mana[player].setBackgroundDrawable(getResources().getDrawable(R.drawable.mana_green));
+			button_mana[player].setBackgroundResource(R.drawable.mana_green);
 			mana_color[player] = MANA_GREEN;
 			break;
 		}
