@@ -31,6 +31,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
@@ -241,8 +242,14 @@ public class SetupActivity extends Activity implements OnClickListener {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String name = input.getText().toString();
-				player_names[player] = name;
-				button_players[player].setText(name);
+				// Check that it's a valid name
+				if (name.matches("[ A-Za-z0-9!#$%&'()*+.:;<=>?@_`{|}~-]+")) {
+					player_names[player] = name;
+					button_players[player].setText(name);
+				}
+				else {
+					Toast.makeText(SetupActivity.this, "Invalid name", Toast.LENGTH_SHORT).show();
+				}
 			} });
 		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {

@@ -542,7 +542,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	/* Convert String to String array of player names */
-	//TODO Note: this can be broken is a player has a comma in their name...
 	String[] namesPrefConvert(String names, int n) {
 		String[] s = names.split(",", n);
 		return s;
