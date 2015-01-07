@@ -8,6 +8,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
@@ -22,7 +23,6 @@ public class Prefs extends PreferenceActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
 
 		// Style the ActionBar
 		ActionBar actionBar = getActionBar();
@@ -32,8 +32,17 @@ public class Prefs extends PreferenceActivity
 		actionBar.setBackgroundDrawable(bitmapDrawable);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
-		//TODO tabbed prefs
+		getFragmentManager().beginTransaction().replace(android.R.id.content, new PrefFragment()).commit();
+		
 	}
+
+	public static class PrefFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(final Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+        }
+    }
 
 	public static boolean getImmersiveMode(Context context)
 	{
