@@ -3,7 +3,7 @@
     <item
         android:id="@+id/menu_setup_working"
         android:orderInCategory="1"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_working_label"/>
     <item
         android:id="@+id/menu_setup_done"

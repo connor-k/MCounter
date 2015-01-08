@@ -5,7 +5,7 @@
     android:background="@drawable/deck"
     android:orientation="horizontal"
     android:padding="30dip"
-    android:textAlignment="center" >
+    android:gravity="center" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -25,10 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="1.0" >
+            
 
                 <RadioGroup
                     android:id="@+id/radiogroup_setup_number_players"
@@ -37,6 +34,7 @@
                     android:layout_weight="0.5"
                     android:orientation="horizontal"
                     android:padding="4dp"
+                    android:paddingLeft="8dp"
                     android:paddingRight="8dp" >
 
                     <RadioButton
@@ -69,7 +67,7 @@
                     android:defaultValue="false"
                     android:gravity="center_vertical"
                     android:text="@string/checkbox_setup_team_together_label" />
-            </TableRow>
+            
         </TableLayout>
 
         <TextView
@@ -96,7 +94,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
-                    android:gravity="center_vertical|center_horizontal|left"
+                    android:gravity="center_vertical|center_horizontal|start"
                     android:height="32dp"
                     android:maxWidth="32dp"
                     android:minHeight="32dp"
@@ -121,7 +119,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
-                    android:gravity="center_vertical|center_horizontal|left"
+                    android:gravity="center_vertical|center_horizontal|start"
                     android:height="32dp"
                     android:maxWidth="32dp"
                     android:minHeight="32dp"
@@ -147,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
                     android:enabled="false"
-                    android:gravity="center_vertical|center_horizontal|left"
+                    android:gravity="center_vertical|center_horizontal|start"
                     android:height="32dp"
                     android:maxWidth="32dp"
                     android:minHeight="32dp"
@@ -174,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/mana_white"
                     android:enabled="false"
-                    android:gravity="center_vertical|center_horizontal|left"
+                    android:gravity="center_vertical|center_horizontal|start"
                     android:height="32dp"
                     android:maxWidth="32dp"
                     android:minHeight="32dp"
