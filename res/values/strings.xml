@@ -15,7 +15,6 @@
     <string name="button_setup_p3_label">Player 3</string>
     <string name="button_setup_p4_label">Player 4</string>
     <string name="setup_initial_life">Initial Life: 20</string>
-    <string name="button_setup_mana_submit_label">Save</string>
     <string name="checkbox_setup_team_together_label">Team Together</string>
     <string name="mana_colorless">&#32;&#32;Colorless</string>
     <string name="mana_white">&#32;&#32;White</string>
@@ -42,13 +41,5 @@
     <string name="life_counter_touchable_title">Life Counter Touchable</string>
     <string name="life_counter_touchable_summaryOn">Life can be adjusted by using the buttons or moving the life scrollbar.</string>
     <string name="life_counter_touchable_summaryOff">Life can only be adjusted by using the buttons, not by moving the life scrollbar.</string>
-    <string-array name="icon_dropdown_options">
-        <item>Colorless</item>
-        <item>Forest</item>
-        <item>Island</item>
-        <item>Mountain</item>
-        <item>Plains</item>
-        <item>Swamp</item>
-    </string-array>
 
 </resources>

@@ -48,7 +48,6 @@ public class SetupActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setup);
-		setTitle("Setup");
 
 		// Style the ActionBar
 		ActionBar actionBar = getActionBar();
@@ -293,7 +292,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 		// Set up the radio group in the dialog. Toggle the current mana color they have
 		final int player = p;
 
-		ScrollView scrollView = (ScrollView) getLayoutInflater().inflate(R.layout.alertdialog_setup_mana, null);
+		ScrollView scrollView = (ScrollView) View.inflate(this, R.layout.alertdialog_setup_mana, null);
 
 		final RadioGroup radioGroup = (RadioGroup) scrollView.findViewById(R.id.radiogroup_setup_mana);
 

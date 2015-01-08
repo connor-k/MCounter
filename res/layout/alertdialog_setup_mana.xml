@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:drawableLeft="@drawable/mana_colorless"
+            android:drawableStart="@drawable/mana_colorless"
             android:padding="8dp"
             android:text="@string/mana_colorless" />
         
@@ -23,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_white"
+            android:drawableStart="@drawable/mana_white"
             android:padding="8dp"
             android:text="@string/mana_white" />
 
@@ -31,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_blue"
+            android:drawableStart="@drawable/mana_blue"
             android:padding="8dp"
             android:text="@string/mana_blue" />
 
@@ -39,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_black"
+            android:drawableStart="@drawable/mana_black"
             android:padding="8dp"
             android:text="@string/mana_black" />
 
@@ -47,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_red"
+            android:drawableStart="@drawable/mana_red"
             android:padding="8dp"
             android:text="@string/mana_red" />
 
@@ -55,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/mana_green"
+            android:drawableStart="@drawable/mana_green"
             android:padding="8dp"
             android:text="@string/mana_green" />
     </RadioGroup>
