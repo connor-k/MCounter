@@ -350,14 +350,15 @@ public class SetupActivity extends Activity implements OnClickListener {
 	}
 	
 	/* Return true if there's a valid game to continue */
-	Boolean checkForContinue() {
+	boolean checkForContinue() {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
 		int saved_num_players = pref.getInt(MainActivity.KEY_NUM_PLAYERS, -1);
 		String[] temp_player_names = Arrays.copyOf(player_names, num_players);
 		Arrays.sort(temp_player_names); // Don't care about order for equality, so sort both
 		String[] saved_player_names = pref.getString(MainActivity.KEY_PLAYER_NAMES, ",,,").split(",", saved_num_players);
 		Arrays.sort(saved_player_names);
-		return pref.getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) && saved_num_players == num_players && Arrays.equals(temp_player_names, saved_player_names) && starting_life == pref.getInt(MainActivity.KEY_STARTING_LIFE, -1);
+		boolean teams = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("KEY_TEAM_TOGETHER", false);
+		return pref.getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) && saved_num_players == num_players && Arrays.equals(temp_player_names, saved_player_names) && starting_life == pref.getInt(MainActivity.KEY_STARTING_LIFE, -1) && teams == checkbox_team_together.isChecked();
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -373,8 +374,12 @@ public class SetupActivity extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 		case R.id.menu_setup_done:
 			final Intent intent = new Intent(SetupActivity.this, MainActivity.class);
-			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, num_players);
-			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, player_names);
+			boolean teams = checkbox_team_together.isChecked();
+			String[] team_names = new String[2];
+			team_names[0] = player_names[0] + (num_players > 2 ? " & " + player_names[2] : "");
+			team_names[1] = player_names[1] + (num_players > 3 ? " & " + player_names[3] : "");
+			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, teams ? num_players : 2);
+			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, team_names);
 			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			intent.putExtra(MainActivity.KEY_MANA_COLOR, mana_color);
 			// Give option to continue previous game if there's one to continue and the players/starting life is the same
