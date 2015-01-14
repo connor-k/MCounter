@@ -376,10 +376,10 @@ public class SetupActivity extends Activity implements OnClickListener {
 			final Intent intent = new Intent(SetupActivity.this, MainActivity.class);
 			boolean teams = checkbox_team_together.isChecked();
 			String[] team_names = new String[2];
-			team_names[0] = player_names[0] + (num_players > 2 ? " & " + player_names[2] : "");
-			team_names[1] = player_names[1] + (num_players > 3 ? " & " + player_names[3] : "");
-			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, teams ? num_players : 2);
-			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, team_names);
+			team_names[0] = player_names[PLAYER_1] + (num_players > 2 ? " & " + player_names[PLAYER_3] : "");
+			team_names[1] = player_names[PLAYER_2] + (num_players > 3 ? " & " + player_names[PLAYER_4] : "");
+			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, teams ? 2 : num_players);
+			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, teams ? team_names : player_names);
 			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
 			intent.putExtra(MainActivity.KEY_MANA_COLOR, mana_color);
 			// Give option to continue previous game if there's one to continue and the players/starting life is the same
