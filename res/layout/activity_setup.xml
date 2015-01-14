@@ -56,17 +56,20 @@
                         android:id="@+id/radio_setup_4p"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="32dp"
                         android:text="@string/setup_4_players" />
-                </RadioGroup>
 
-                <CheckBox
-                    android:id="@+id/checkbox_setup_team_together"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.5"
-                    android:defaultValue="false"
-                    android:gravity="center_vertical"
-                    android:text="@string/checkbox_setup_team_together_label" />
+                    <CheckBox
+                        android:id="@+id/checkbox_setup_team_together"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.5"
+                        android:defaultValue="false"
+                        android:gravity="center_vertical"
+                        android:text="@string/checkbox_setup_team_together_label" />
+
+                </RadioGroup>
             
         </TableLayout>
 
