@@ -33,14 +33,14 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 	// Some keys for passing information from setup
-	public static String KEY_NUM_PLAYERS	= "mtg_num_players";
-	public static String KEY_PLAYER_NAMES	= "mtg_player_names";
-	public static String KEY_STARTING_LIFE	= "mtg_starting_life";
-	public static String KEY_MANA_COLOR	= "mtg_player_icons";
-	public static String KEY_CONTINUE_GAME	= "mtg_continue_game";
-	public static String KEY_GAME_IN_PROGRESS = "mtg_game_in_progress";
-	public static String KEY_LIFE	= "mtg_life";
-	public static String KEY_ALIVE	= "mtg_alive";
+	public static String KEY_NUM_PLAYERS	= "num_players";
+	public static String KEY_PLAYER_NAMES	= "player_names";
+	public static String KEY_STARTING_LIFE	= "starting_life";
+	public static String KEY_MANA_COLOR	= "player_icons";
+	public static String KEY_CONTINUE_GAME	= "continue_game";
+	public static String KEY_GAME_IN_PROGRESS = "game_in_progress";
+	public static String KEY_LIFE	= "life";
+	public static String KEY_ALIVE	= "alive";
 
 	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
 	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
@@ -64,27 +64,22 @@ public class MainActivity extends Activity implements OnClickListener {
 		// Get passed information and initialize player names, life, etc.
 		String[] names;
 		int[] icons;
-		// New game first:
-		final boolean continue_game = getIntent().getIntExtra(KEY_CONTINUE_GAME, 0) == 1;
-		if (!continue_game) {
-			NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
-			names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
-			STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
-			icons = getIntent().getIntArrayExtra(KEY_MANA_COLOR);
-			life = new int[NUM_PLAYERS];
+		NUM_PLAYERS = getIntent().getIntExtra(KEY_NUM_PLAYERS, 2);
+		names = getIntent().getStringArrayExtra(KEY_PLAYER_NAMES);
+		STARTING_LIFE = getIntent().getIntExtra(KEY_STARTING_LIFE, 20);
+		icons = getIntent().getIntArrayExtra(KEY_MANA_COLOR);
+		life = new int[NUM_PLAYERS];
+		// If continuing a game, restore live/alive state
+		if (getIntent().getIntExtra(KEY_CONTINUE_GAME, 0) == 1) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+			life = lifePrefConvert(prefs.getString(KEY_LIFE, "20,20,20,20"), NUM_PLAYERS);
+			alive = alivePrefConvert(prefs.getString(KEY_ALIVE, "1111"), NUM_PLAYERS);
+		}
+		else {
 			for (int i = 0; i < NUM_PLAYERS; ++i) {
 				life[i] = STARTING_LIFE;
 				alive[i] = true;
 			}
-		}
-		else {
-			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-			NUM_PLAYERS = pref.getInt(KEY_NUM_PLAYERS, 2);
-			names = namesPrefConvert(pref.getString(KEY_PLAYER_NAMES, ",,,"), NUM_PLAYERS);
-			STARTING_LIFE = pref.getInt(KEY_STARTING_LIFE, 20);
-			icons = iconsPrefConvert(pref.getString(KEY_MANA_COLOR, "0000"), NUM_PLAYERS);
-			life = lifePrefConvert(pref.getString(KEY_LIFE, "20,20,20,20"), NUM_PLAYERS);
-			alive = alivePrefConvert(pref.getString(KEY_ALIVE, "1111"), NUM_PLAYERS);
 		}
 
 		PLAYER_NAMES = new String[NUM_PLAYERS];
@@ -94,9 +89,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			PLAYER_ICONS[i] = icons[i];
 		}
 
-		//TODO Restore last life state if possible
+		// Restore last life state if possible
 		if (savedInstanceState != null) {
-			life = savedInstanceState.getIntArray("main_life");
+			life = savedInstanceState.getIntArray(KEY_LIFE);
+			alive = savedInstanceState.getBooleanArray(KEY_ALIVE);
 		}
 
 		// The textview and progressbars to keep track of player life
@@ -247,48 +243,45 @@ public class MainActivity extends Activity implements OnClickListener {
 			PROGRESSBAR_LIFE[PLAYER_2].setThumb(getManaIcon(PLAYER_2));
 
 			// Animate filling the life bars if new game
-			if (!continue_game) {
-				for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
-					final int player = i;
-					ValueAnimator anim = ValueAnimator.ofInt(0, PROGRESSBAR_LIFE[player].getMax()/life[player]*STARTING_LIFE);
-					anim.setDuration(3000);
-					anim.addUpdateListener(new AnimatorUpdateListener() {
-						@Override
-						public void onAnimationUpdate(ValueAnimator animation) {
-							int animProgress = (Integer) animation.getAnimatedValue();
-							PROGRESSBAR_LIFE[player].setProgress(animProgress);
-						}
-					});
-					anim.setStartDelay(300);
-					anim.start();
-				}
-			}
-			else {
-				for (int i = 0; i < PROGRESSBAR_LIFE.length; ++i) {
-					PROGRESSBAR_LIFE[i].setProgress(life[i]);
-				}
+			int[] temp = new int[NUM_PLAYERS];
+			System.arraycopy(life, 0, temp, 0, life.length);
+			final int[] life_target = temp;
+			for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
+				final int player = i;
+
+				ValueAnimator anim = ValueAnimator.ofInt(0, PROGRESSBAR_LIFE[player].getMax()*life_target[player]/STARTING_LIFE);
+				anim.setDuration(3000);
+				anim.addUpdateListener(new AnimatorUpdateListener() {
+					@Override
+					public void onAnimationUpdate(ValueAnimator animation) {
+						int animProgress = (Integer) animation.getAnimatedValue();
+						PROGRESSBAR_LIFE[player].setProgress(animProgress);
+					}
+				});
+				anim.setStartDelay(300);
+				anim.start();
 			}
 
 			// Make life text visible after the animation, and set max progress to initial life
 			new AsyncTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
-					if (!continue_game) {
-						try {
-							Thread.sleep(3300);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+					try {
+						Thread.sleep(3300);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
 					return null;
 				}
 				@Override
 				protected void onPostExecute(Void result) {
 					super.onPostExecute(result);
-					// Set the seekbar's maxes and progresses to be starting life of the player
+					// Set the seekbar's maxes and progresses to be starting life of the player, scaling back down
 					for (int i = 0; i < NUM_PLAYERS; i++) {
 						PROGRESSBAR_LIFE[i].setMax(STARTING_LIFE);
+						life[i] = life_target[i];
 						PROGRESSBAR_LIFE[i].setProgress(life[i]);
+						updateViews(i);
 					}
 					// Start checking if players have lost
 					game_started = true;
@@ -351,7 +344,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		//TODO Activity lifecycle stuff
 	}
 
-	// TODO: This is a hack to get the mana icons, needs more efficient method later
+	/** Get the given player's mana icon for the life tracker **/
 	private Drawable getManaIcon(int player) {
 		Drawable output = null;
 		switch (PLAYER_ICONS[player]) {
@@ -615,8 +608,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		//TODO others, remove configChanges from manifest
-		outState.putIntArray("main_life", life);
+		outState.putIntArray(KEY_LIFE, life);
+		outState.putBooleanArray(KEY_ALIVE, alive);
 	}
 
 	@Override
