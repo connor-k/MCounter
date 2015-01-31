@@ -48,6 +48,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setup);
+		setTitle(R.string.setup);
 
 		// Style the ActionBar
 		ActionBar actionBar = getActionBar();
