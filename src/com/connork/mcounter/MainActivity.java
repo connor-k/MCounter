@@ -1,4 +1,4 @@
-package com.connork.mtgcounter;
+package com.connork.mcounter;
 
 import java.util.Random;
 

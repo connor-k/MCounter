@@ -1,4 +1,4 @@
-package com.connork.mtgcounter;
+package com.connork.mcounter;
 
 import android.app.ActionBar;
 import android.content.Context;
