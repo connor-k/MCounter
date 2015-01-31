@@ -30,6 +30,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnClickListener {
 	// Some keys for passing information from setup
@@ -101,7 +102,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// Set up all the views and change the layout based on the number of players
 		// The switch has no breaks, so each case sets up that player number (with case 2 setting up players 1 and 2)
-		//TODO make landscape layouts, tablet ui?
 		switch (NUM_PLAYERS) {
 		case 4: 
 			// Use the 4-player layout
@@ -341,7 +341,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// Add flag to continue this game
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean(KEY_GAME_IN_PROGRESS, true).commit();
-		//TODO Activity lifecycle stuff
 	}
 
 	/** Get the given player's mana icon for the life tracker **/
@@ -407,7 +406,6 @@ public class MainActivity extends Activity implements OnClickListener {
 				}
 			}
 			if (alive_count == 1) {
-				//TODO do something special
 				// Set continue flag to false
 				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean(KEY_GAME_IN_PROGRESS, false).commit();
 			}
