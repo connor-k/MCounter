@@ -24,3 +24,13 @@ proguard/
 
 # Eclipse settings
 .settings/
+
+# Drawables to be provided by user
+res/drawable/deck.png
+res/drawable/plane.png
+res/drawable/mana_black.png
+res/drawable/mana_blue.png
+res/drawable/mana_colorless.png
+res/drawable/mana_green.png
+res/drawable/mana_red.png
+res/drawable/mana_white.png
