@@ -45,6 +45,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private int NUM_PLAYERS, STARTING_LIFE, selected_p13 = 0, selected_p24 = 1;
 	public static int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3;
 	private int[] life;
+	private int[] life_target;
 	private boolean[] alive = {false, false, false, false};
 	private boolean game_started;
 	private String[] PLAYER_NAMES;
@@ -58,9 +59,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		game_started = false;
-		
+
 		// Get passed information and initialize player names, life, etc.
 		String[] names;
 		int[] icons;
@@ -244,7 +245,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Animate filling the life bars if new game
 			int[] temp = new int[NUM_PLAYERS];
 			System.arraycopy(life, 0, temp, 0, life.length);
-			final int[] life_target = temp;
+			life_target = temp;
 			for (int i = 0; i < PROGRESSBAR_LIFE.length; i++) {
 				final int player = i;
 
@@ -512,7 +513,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Get random index
 			Random numgen = new Random();
 			int index = numgen.nextInt(NUM_PLAYERS);
-			
+
 			// Make an AlertDialog to show the randomly chosen player
 			AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
 			alertDialog.setTitle("Random Player:");
@@ -530,13 +531,13 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	/* Convert String to String array of player names */
 	String[] namesPrefConvert(String names, int n) {
 		String[] s = names.split(",", n);
 		return s;
 	}
-	
+
 	/* Convert String[] to String of player names */
 	String namesPrefConvert(String[] names) {
 		String s = "";
@@ -545,7 +546,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return s;
 	}
-	
+
 	/* Convert icons string to int[] */
 	int[] iconsPrefConvert(String icons, int n) {
 		int[] ic = new int[n];
@@ -554,7 +555,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return ic;
 	}
-	
+
 	/* Convert icons int[] to string */
 	String iconsPrefConvert(int[] icons) {
 		String s = "";
@@ -563,7 +564,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return s;
 	}
-	
+
 	/* Convert life string to int[] */
 	int[] lifePrefConvert(String life, int n) {
 		String[] temp = life.split(",", n);
@@ -573,7 +574,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return li;
 	}
-	
+
 	/* Convert life int[] to string */
 	String lifePrefConvert(int[] life) {
 		String s = "";
@@ -582,7 +583,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return s;
 	}
-	
+
 	/* Convert alive string to boolean[] */
 	boolean[] alivePrefConvert(String alive, int n) {
 		boolean[] al = new boolean[n];
@@ -591,7 +592,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		return al;
 	}
-	
+
 	/* Convert alive boolean[] to string */
 	String alivePrefConvert(boolean[] life) {
 		String s = "";
@@ -611,7 +612,19 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onPause() {
+		super.onPause();
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		// Reset life to target if the animator is running
+		if (!game_started) {
+			// Set the seekbar's maxes and progresses to be starting life of the player, scaling back down
+			for (int i = 0; i < NUM_PLAYERS; i++) {
+				PROGRESSBAR_LIFE[i].setMax(STARTING_LIFE);
+				life[i] = life_target[i];
+				PROGRESSBAR_LIFE[i].setProgress(life[i]);
+				updateViews(i);
+			}
+		}
 		
 		// Save for continue game
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -621,8 +634,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		pref.edit().putString(KEY_MANA_COLOR, iconsPrefConvert(PLAYER_ICONS)).commit();
 		pref.edit().putString(KEY_LIFE, lifePrefConvert(life)).commit();
 		pref.edit().putString(KEY_ALIVE, alivePrefConvert(alive)).commit();
-		
-		super.onPause();
 	}
 
 	@Override
