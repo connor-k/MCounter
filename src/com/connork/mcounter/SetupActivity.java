@@ -175,15 +175,14 @@ public class SetupActivity extends Activity implements OnClickListener {
 	/** Update all button text and mana color */
 	private void updateViews() {
 		// Set button text and mana to player names
+		if (checkbox_team_together.isChecked()) {
+			button_players[PLAYER_1].setText("Team 1: " + player_names[PLAYER_1]);
+			button_players[PLAYER_2].setText("Team 2: " + player_names[PLAYER_2]);
+			button_players[PLAYER_3].setText("Team 1: " + player_names[PLAYER_3]);
+			button_players[PLAYER_4].setText("Team 2: " + player_names[PLAYER_4]);
+		}
 		for (int i = 0; i < 4; i++) {
-			// Add team label to player names for clarity
-			if (checkbox_team_together.isChecked()) {
-				button_players[PLAYER_1].setText("Team 1: " + player_names[PLAYER_1]);
-				button_players[PLAYER_2].setText("Team 2: " + player_names[PLAYER_2]);
-				button_players[PLAYER_3].setText("Team 1: " + player_names[PLAYER_3]);
-				button_players[PLAYER_4].setText("Team 2: " + player_names[PLAYER_4]);
-			}
-			else {
+			if (!checkbox_team_together.isChecked()) {
 				button_players[i].setText(player_names[i]);
 			}
 			setManaColor(i, mana_color[i]);
@@ -349,7 +348,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 			} });
 		alertDialog.show();
 	}
-	
+
 	/* Return true if there's a valid game to continue */
 	boolean checkForContinue() {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
@@ -421,11 +420,7 @@ public class SetupActivity extends Activity implements OnClickListener {
 				mana_color[index] = mana_color[i];
 				mana_color[i] = temp_mana;
 			}
-			// Update the views
-			for (int i = 0; i < num_players; i++) {
-				button_players[i].setText(player_names[i]);
-				setManaColor(i, mana_color[i]);
-			}
+			updateViews();
 			return true;
 		case R.id.menu_setup_settings:
 			Intent intent2 = new Intent(SetupActivity.this, Prefs.class);
