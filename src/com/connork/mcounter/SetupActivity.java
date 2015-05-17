@@ -40,8 +40,8 @@ public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
 	private int numPlayers;
 	private int startingLife;
-    private int[] playerManaColors;
-    private String[] playerNames;
+	private int[] playerManaColors;
+	private String[] playerNames;
 	private Button[] playerNameButtons;
 	private Button[] playerManaButtons;
 	private CheckBox teamTogetherCheckbox;
