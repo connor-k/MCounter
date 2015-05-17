@@ -1,8 +1,5 @@
 package com.connork.mcounter;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,16 +30,23 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.Random;
+
+/**
+ * The starting activity for the application, sets player names, gametype, and other basic info.
+ */
 public class SetupActivity extends Activity implements OnClickListener {
 	private Menu optionsMenu;
-	private int num_players, starting_life;
-	private final int PLAYER_1 = 0, PLAYER_2 = 1, PLAYER_3 = 2, PLAYER_4 = 3, MANA_COLORLESS = 0, MANA_WHITE = 1, MANA_BLUE = 2, MANA_BLACK = 3, MANA_RED = 4, MANA_GREEN = 5;
-	private int[] mana_color = new int[4]; // The mana color code for each player
-	private String player_names[] = new String[4];
-	private Button button_players[] = new Button[4], button_mana[] = new Button[4];
-	private CheckBox checkbox_team_together;
-	private RadioGroup radio_group;
-	private RadioButton radio_button[] = new RadioButton[3];
+	private int numPlayers;
+	private int startingLife;
+    private int[] playerManaColors;
+    private String[] playerNames;
+	private Button[] playerNameButtons;
+	private Button[] playerManaButtons;
+	private CheckBox teamTogetherCheckbox;
+	private RadioGroup nPlayersRadioGroup;
+	private RadioButton[] nPlayersRadioButtons;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,310 +61,344 @@ public class SetupActivity extends Activity implements OnClickListener {
 		bitmapDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
 		actionBar.setBackgroundDrawable(bitmapDrawable);
 
-		// Set up click listeners for all the player name buttons
-		button_players[0] = (Button) findViewById(R.id.button_setup_p1);
-		button_players[1] = (Button) findViewById(R.id.button_setup_p2);
-		button_players[2] = (Button) findViewById(R.id.button_setup_p3);
-		button_players[3] = (Button) findViewById(R.id.button_setup_p4);
-		for (int i = 0; i < 4; i++) {
-			button_players[i].setOnClickListener(this);
-		}
-
-		// Set up click listeners for all the player mana colors
-		button_mana[0] = (Button) findViewById(R.id.button_setup_p1_mana);
-		button_mana[1] = (Button) findViewById(R.id.button_setup_p2_mana);
-		button_mana[2] = (Button) findViewById(R.id.button_setup_p3_mana);
-		button_mana[3] = (Button) findViewById(R.id.button_setup_p4_mana);
-		for (int i = 0; i < 4; i++) {
-			button_mana[i].setOnClickListener(this);
+		// Initialize the private members to store player names and colors
+		playerNames = new String[Constants.MAX_PLAYERS];
+		playerNameButtons = new Button[Constants.MAX_PLAYERS];
+		playerManaColors = new int[Constants.MAX_PLAYERS];
+		playerManaButtons = new Button[Constants.MAX_PLAYERS];
+		nPlayersRadioButtons = new RadioButton[Constants.MAX_PLAYERS - 1];
+		
+		// Initialize name and mana buttons
+		playerNameButtons[Constants.PLAYER_1] = (Button) findViewById(R.id.button_setup_p1);
+		playerNameButtons[Constants.PLAYER_2] = (Button) findViewById(R.id.button_setup_p2);
+		playerNameButtons[Constants.PLAYER_3] = (Button) findViewById(R.id.button_setup_p3);
+		playerNameButtons[Constants.PLAYER_4] = (Button) findViewById(R.id.button_setup_p4);
+		
+		playerManaButtons[Constants.PLAYER_1] = (Button) findViewById(R.id.button_setup_p1_mana);
+		playerManaButtons[Constants.PLAYER_2] = (Button) findViewById(R.id.button_setup_p2_mana);
+		playerManaButtons[Constants.PLAYER_3] = (Button) findViewById(R.id.button_setup_p3_mana);
+		playerManaButtons[Constants.PLAYER_4] = (Button) findViewById(R.id.button_setup_p4_mana);
+		// Register listeners for both sets of buttons
+		for (int i = 0; i < Constants.MAX_PLAYERS; i++) {
+			playerNameButtons[i].setOnClickListener(this);
+			playerManaButtons[i].setOnClickListener(this);
 		}
 
 		// Set up the radio group to select how many people are playing
-		radio_button[0] = (RadioButton) findViewById(R.id.radio_setup_2p);
-		radio_button[1] = (RadioButton) findViewById(R.id.radio_setup_3p);
-		radio_button[2] = (RadioButton) findViewById(R.id.radio_setup_4p);
-		radio_group = (RadioGroup) findViewById(R.id.radiogroup_setup_number_players);
-		radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+		nPlayersRadioButtons[0] = (RadioButton) findViewById(R.id.radio_setup_2p);
+		nPlayersRadioButtons[1] = (RadioButton) findViewById(R.id.radio_setup_3p);
+		nPlayersRadioButtons[2] = (RadioButton) findViewById(R.id.radio_setup_4p);
+		nPlayersRadioGroup = (RadioGroup) findViewById(R.id.radiogroup_setup_number_players);
+		nPlayersRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) 
-			{
-				RadioButton checkedRadioButton = (RadioButton) findViewById(checkedId);
-				String text = checkedRadioButton.getText().toString();
-
-				if (text.equals(radio_button[0].getText())) {
-					num_players = 2;
-				}
-				else if (text.equals(radio_button[1].getText())) {
-					num_players = 3;
-				}
-				else if (text.equals(radio_button[2].getText())) {
-					num_players = 4;
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch (checkedId) {
+					case R.id.radio_setup_3p:
+						numPlayers = 3;
+						break;
+					case R.id.radio_setup_4p:
+						numPlayers = 4;
+						break;
+					default: // Two players
+						numPlayers = 2;
+						break;
 				}
 				for (int i = 0; i < 4; i++) {
-					if (i < num_players) {
-						button_players[i].setEnabled(true);
-						button_mana[i].setEnabled(true);
-					}
-					else {
-						button_players[i].setEnabled(false);
-						button_mana[i].setEnabled(false);
-					}
+					// Enable the buttons if it's a valid player for this game
+					playerNameButtons[i].setEnabled(i < numPlayers);
+					playerManaButtons[i].setEnabled(i < numPlayers);
 				}
 			}
 		});
 
-		// Set up checkbox for teams
-		checkbox_team_together = (CheckBox)findViewById(R.id.checkbox_setup_team_together);
-		checkbox_team_together.setOnClickListener(this);
+		// Initialize the team together checkbox
+		teamTogetherCheckbox = (CheckBox) findViewById(R.id.checkbox_setup_team_together);
+		teamTogetherCheckbox.setOnClickListener(this);
 
-		// Set up the SeekBar that determines initial life
-		SeekBar seekBar = (SeekBar)findViewById(R.id.seekbar_setup_life);
-		final TextView seekBarText = (TextView)findViewById(R.id.textview_setup_initial_life);
-		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){ 
-
+		// Initialize the SeekBar that determines initial life
+		SeekBar seekBar = (SeekBar) findViewById(R.id.seekbar_setup_life);
+		final TextView seekBarText = (TextView) findViewById(R.id.textview_setup_initial_life);
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { 
 			@Override 
-			public void onProgressChanged(SeekBar seekBar, int progress, 
-					boolean fromUser) { 
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { 
 				// Don't let them start with less than 1 life
 				if (progress < 1) {
 					seekBar.setProgress(1);
-				}
-				else {
-					starting_life = progress;
-					seekBarText.setText("Initial Life: " + starting_life);
+				} else {
+					startingLife = progress;
+					seekBarText.setText("Initial Life: " + startingLife);
 				}
 			} 
 
 			@Override 
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			} 
+			public void onStartTrackingTouch(SeekBar seekBar) {} 
 
 			@Override 
-			public void onStopTrackingTouch(SeekBar seekBar) { 
-			} 
+			public void onStopTrackingTouch(SeekBar seekBar) {}
 		}); 
 
-		// Restore last state if possible, otherwise get the player names etc from storage
-		if (savedInstanceState != null)
-		{
-			num_players = savedInstanceState.getInt("setup_num_players", 2);
-			player_names = savedInstanceState.getStringArray("setup_player_names");
-			starting_life = savedInstanceState.getInt("setup_starting_life", 20);
-			mana_color = savedInstanceState.getIntArray("setup_mana_color");
-			checkbox_team_together.setChecked(savedInstanceState.getBoolean("setup_team_together", false));
-		}
-		else {
-			String names = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_PLAYER_NAMES", "Player 1, Player 2, Player 3, Player 4");
-			player_names = names.split(",");
-			num_players = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_NUM_PLAYERS", 2);
-			starting_life = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("KEY_STARTING_LIFE", 20);
-			String icons = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("KEY_MANA_COLOR", MANA_WHITE + "," + MANA_RED + "," +  MANA_BLUE + "," + MANA_GREEN);
+		// Restore the last state if possible, otherwise get the player names etc from storage
+		if (savedInstanceState != null) {
+			numPlayers = savedInstanceState.getInt("setup_num_players", 2);
+			playerNames = savedInstanceState.getStringArray("setup_player_names");
+			startingLife = savedInstanceState.getInt("setup_starting_life", 20);
+			playerManaColors = savedInstanceState.getIntArray("setup_mana_color");
+			teamTogetherCheckbox.setChecked(savedInstanceState.getBoolean("setup_team_together",
+					false));
+		} else {
+			String names = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+					.getString("KEY_PLAYER_NAMES", "Player 1, Player 2, Player 3, Player 4");
+			playerNames = names.split(",");
+			numPlayers = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+					.getInt("KEY_NUM_PLAYERS", 2);
+			startingLife = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+					.getInt("KEY_STARTING_LIFE", 20);
+			String icons = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+					.getString("KEY_MANA_COLOR", Constants.MANA_WHITE + "," + Constants.MANA_RED + "," +  Constants.MANA_BLUE + "," + Constants.MANA_GREEN);
 			String[] iconNums = icons.split(",");
 			for (int i = 0; i < iconNums.length; i++) {
-				mana_color[i] = Integer.parseInt(iconNums[i]);
+				playerManaColors[i] = Integer.parseInt(iconNums[i]);
 			}
-			checkbox_team_together.setChecked(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("KEY_TEAM_TOGETHER", false));
+			teamTogetherCheckbox.setChecked(PreferenceManager.getDefaultSharedPreferences(
+					getApplicationContext()).getBoolean("KEY_TEAM_TOGETHER", false));
 		}
 		// Select the appropriate radio button for how many people are playing
-		radio_button[num_players - 2].toggle();
+		nPlayersRadioButtons[numPlayers - 2].toggle();
 
 		// Set the initial life progress bar to previous state
-		seekBar.setProgress(starting_life);
-		seekBarText.setText("Initial Life: " + starting_life);
+		seekBar.setProgress(startingLife);
+		seekBarText.setText("Initial Life: " + startingLife);
 
-		// Update player names & mana color
+		// Update player button labels and mana icons
 		updateViews();
 	}
 
-	/** Update all button text and mana color */
+	/**
+	 * Update all button text and icons.
+	 */
 	private void updateViews() {
-		// Set button text and mana to player names
-		if (checkbox_team_together.isChecked()) {
-			button_players[PLAYER_1].setText("Team 1: " + player_names[PLAYER_1]);
-			button_players[PLAYER_2].setText("Team 2: " + player_names[PLAYER_2]);
-			button_players[PLAYER_3].setText("Team 1: " + player_names[PLAYER_3]);
-			button_players[PLAYER_4].setText("Team 2: " + player_names[PLAYER_4]);
+		// Set button text and mana to player names. If teaming together, include team number.
+		if (teamTogetherCheckbox.isChecked()) {
+			playerNameButtons[Constants.PLAYER_1].setText("Team 1: " 
+					+ playerNames[Constants.PLAYER_1]);
+			playerNameButtons[Constants.PLAYER_2].setText("Team 2: " 
+					+ playerNames[Constants.PLAYER_2]);
+			playerNameButtons[Constants.PLAYER_3].setText("Team 1: " 
+					+ playerNames[Constants.PLAYER_3]);
+			playerNameButtons[Constants.PLAYER_4].setText("Team 2: " 
+					+ playerNames[Constants.PLAYER_4]);
 		}
-		for (int i = 0; i < 4; i++) {
-			if (!checkbox_team_together.isChecked()) {
-				button_players[i].setText(player_names[i]);
+		for (int i = 0; i < Constants.MAX_PLAYERS; ++i) {
+			// If it's not teams, set the labels to just be the player's name.
+			if (!teamTogetherCheckbox.isChecked()) {
+				playerNameButtons[i].setText(playerNames[i]);
 			}
-			setManaColor(i, mana_color[i]);
+			// Regardless of the label, set the mana icon.
+			setManaColor(i, playerManaColors[i]);
 		}
 	}
 
-	/** Handle when a button is clicked, call appropriate action */
+	/**
+	 * Handle the appropriate action when a button is clicked.
+	 * @param v The view that was clicked.
+	 */
+	@Override
 	public void onClick(View v) {
-		switch (v.getId()) 
-		{
-		case R.id.checkbox_setup_team_together:
-			updateViews();
-			break;
-		case R.id.button_setup_p1:
-			editPlayerName(PLAYER_1);
-			break;
-		case R.id.button_setup_p2:
-			editPlayerName(PLAYER_2); 
-			break;
-		case R.id.button_setup_p3:
-			editPlayerName(PLAYER_3);
-			break;
-		case R.id.button_setup_p4:
-			editPlayerName(PLAYER_4); 
-			break;
-		case R.id.button_setup_p1_mana:
-			editPlayerMana(PLAYER_1);
-			break;
-		case R.id.button_setup_p2_mana:
-			editPlayerMana(PLAYER_2); 
-			break;
-		case R.id.button_setup_p3_mana:
-			editPlayerMana(PLAYER_3);
-			break;
-		case R.id.button_setup_p4_mana:
-			editPlayerMana(PLAYER_4); 
-			break;
+		switch (v.getId()) {
+			case R.id.checkbox_setup_team_together:
+				updateViews();
+				break;
+			case R.id.button_setup_p1:
+				editPlayerName(Constants.PLAYER_1);
+				break;
+			case R.id.button_setup_p2:
+				editPlayerName(Constants.PLAYER_2); 
+				break;
+			case R.id.button_setup_p3:
+				editPlayerName(Constants.PLAYER_3);
+				break;
+			case R.id.button_setup_p4:
+				editPlayerName(Constants.PLAYER_4); 
+				break;
+			case R.id.button_setup_p1_mana:
+				editPlayerMana(Constants.PLAYER_1);
+				break;
+			case R.id.button_setup_p2_mana:
+				editPlayerMana(Constants.PLAYER_2); 
+				break;
+			case R.id.button_setup_p3_mana:
+				editPlayerMana(Constants.PLAYER_3);
+				break;
+			case R.id.button_setup_p4_mana:
+				editPlayerMana(Constants.PLAYER_4); 
+				break;
+			default:
+				// Do nothing.
 		}
 	}
 
-	/** Set a player's name */
-	private void editPlayerName(int p) {
-		final int player = p;
+	/** 
+	 * Create a dialog to set a player's name.
+	 * @param player The int code for the player to edit
+	 */
+	private void editPlayerName(final int player) {
 		AlertDialog alertDialog = new AlertDialog.Builder(SetupActivity.this).create();
 		alertDialog.setTitle("Edit Player Name");
-		alertDialog.setMessage("Enter Player " + (player+1) + "\'s name:");                
-		// Set an EditText view to get name   
+		alertDialog.setMessage("Enter Player " + (player + 1) + "\'s name:");                
+		// Set an EditText view to get the name   
 		final EditText input = new EditText(this); 
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-		input.setHint("Player " + (player+1));
-		input.setText(player_names[player]);
+		input.setHint("Player " + (player + 1));
+		input.setText(playerNames[player]);
 		int position = input.length();
 		Editable etext = input.getText();
 		Selection.setSelection(etext, position);
 		alertDialog.setView(input);
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", 
+				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String name = input.getText().toString();
 				// Check that it's a valid name
 				if (name.matches("[ A-Za-z0-9!#$%&'()*+.:;<=>?@_`{|}~-]+")) {
-					player_names[player] = name;
-					button_players[player].setText(name);
-				}
-				else {
+					playerNames[player] = name;
+					playerNameButtons[player].setText(name);
+				} else {
 					Toast.makeText(SetupActivity.this, "Invalid name", Toast.LENGTH_SHORT).show();
 				}
 			} });
 		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				// empty
+				// Do nothing
 			} });
 		alertDialog.show();
 	}
 
-	/** Change a player's mana icon and updates the array of icons */
+	/**
+	 * Create a dialog to set a player's mana icon.
+	 * @param player The int code for the player to edit
+	 * @param color The int code for the mana color to set
+	 */
 	private void setManaColor(int player, int color) {
 		switch (color) {
-		case MANA_COLORLESS:
-			button_mana[player].setBackgroundResource(R.drawable.mana_colorless);
-			mana_color[player] = MANA_COLORLESS;
-			break;
-		case MANA_WHITE:
-			button_mana[player].setBackgroundResource(R.drawable.mana_white);
-			mana_color[player] = MANA_WHITE;
-			break;
-		case MANA_BLUE:
-			button_mana[player].setBackgroundResource(R.drawable.mana_blue);
-			mana_color[player] = MANA_BLUE;
-			break;
-		case MANA_BLACK:
-			button_mana[player].setBackgroundResource(R.drawable.mana_black);
-			mana_color[player] = MANA_BLACK;
-			break;
-		case MANA_RED:
-			button_mana[player].setBackgroundResource(R.drawable.mana_red);
-			mana_color[player] = MANA_RED;
-			break;
-		case MANA_GREEN:
-			button_mana[player].setBackgroundResource(R.drawable.mana_green);
-			mana_color[player] = MANA_GREEN;
-			break;
+			case Constants.MANA_WHITE:
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_white);
+				playerManaColors[player] = Constants.MANA_WHITE;
+				break;
+			case Constants.MANA_BLUE:
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_blue);
+				playerManaColors[player] = Constants.MANA_BLUE;
+				break;
+			case Constants.MANA_BLACK:
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_black);
+				playerManaColors[player] = Constants.MANA_BLACK;
+				break;
+			case Constants.MANA_RED:
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_red);
+				playerManaColors[player] = Constants.MANA_RED;
+				break;
+			case Constants.MANA_GREEN:
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_green);
+				playerManaColors[player] = Constants.MANA_GREEN;
+				break;
+			default: // MANA_COLORLESS
+				playerManaButtons[player].setBackgroundResource(R.drawable.mana_colorless);
+				playerManaColors[player] = Constants.MANA_COLORLESS;
+				break;
 		}
 	}
 
-	/** Dialog to set a player's mana color */
-	private void editPlayerMana(int p) {
-		// Set up the radio group in the dialog. Toggle the current mana color they have
-		final int player = p;
-
-		ScrollView scrollView = (ScrollView) View.inflate(this, R.layout.alertdialog_setup_mana, null);
-
-		final RadioGroup radioGroup = (RadioGroup) scrollView.findViewById(R.id.radiogroup_setup_mana);
-
-		switch (mana_color[player]) {
-		case MANA_COLORLESS:
-			radioGroup.check(R.id.radio_setup_mana_colorless);
-			break;
-		case MANA_WHITE:
-			radioGroup.check(R.id.radio_setup_mana_white);
-			break;
-		case MANA_BLUE:
-			radioGroup.check(R.id.radio_setup_mana_blue);
-			break;
-		case MANA_BLACK:
-			radioGroup.check(R.id.radio_setup_mana_black);
-			break;
-		case MANA_RED:
-			radioGroup.check(R.id.radio_setup_mana_red);
-			break;
-		case MANA_GREEN:
-			radioGroup.check(R.id.radio_setup_mana_green);
-			break;
+	/**
+	 * Dialog to set a player's mana color.
+	 * @param player The int code for the player to edit
+	 */
+	private void editPlayerMana(final int player) {
+		// Create a view for the dialog
+		ScrollView scrollView = (ScrollView) View.inflate(this, R.layout.alertdialog_setup_mana, 
+				null);
+		final RadioGroup radioGroup = (RadioGroup) scrollView.findViewById(
+				R.id.radiogroup_setup_mana);
+		// Select their currently chosen color
+		switch (playerManaColors[player]) {
+			case Constants.MANA_WHITE:
+				radioGroup.check(R.id.radio_setup_mana_white);
+				break;
+			case Constants.MANA_BLUE:
+				radioGroup.check(R.id.radio_setup_mana_blue);
+				break;
+			case Constants.MANA_BLACK:
+				radioGroup.check(R.id.radio_setup_mana_black);
+				break;
+			case Constants.MANA_RED:
+				radioGroup.check(R.id.radio_setup_mana_red);
+				break;
+			case Constants.MANA_GREEN:
+				radioGroup.check(R.id.radio_setup_mana_green);
+				break;
+			default: // MANA_COLORLESS
+				radioGroup.check(R.id.radio_setup_mana_colorless);
+				break;
 		}
 
-		// Set up the dialog
+		// Create the dialog
 		final AlertDialog alertDialog = new AlertDialog.Builder(SetupActivity.this).create();
-		alertDialog.setTitle("Choose " + player_names[player] + "\'s Mana Color");
+		alertDialog.setTitle("Choose " + playerNames[player] + "\'s Mana Color");
 		alertDialog.setView(scrollView);
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", 
+				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				RadioGroup radioGroup = (RadioGroup)alertDialog.findViewById(R.id.radiogroup_setup_mana);
-
+				RadioGroup radioGroup = (RadioGroup) alertDialog.findViewById(
+						R.id.radiogroup_setup_mana);
 				switch (radioGroup.getCheckedRadioButtonId()) {
-				case R.id.radio_setup_mana_colorless:
-					setManaColor(player, MANA_COLORLESS);
-					break;
-				case R.id.radio_setup_mana_white:
-					setManaColor(player, MANA_WHITE);
-					break;
-				case R.id.radio_setup_mana_blue:
-					setManaColor(player, MANA_BLUE);
-					break;
-				case R.id.radio_setup_mana_black:
-					setManaColor(player, MANA_BLACK);
-					break;
-				case R.id.radio_setup_mana_red:
-					setManaColor(player, MANA_RED);
-					break;
-				case R.id.radio_setup_mana_green:
-					setManaColor(player, MANA_GREEN);
-					break;
+					case R.id.radio_setup_mana_white:
+						setManaColor(player, Constants.MANA_WHITE);
+						break;
+					case R.id.radio_setup_mana_blue:
+						setManaColor(player, Constants.MANA_BLUE);
+						break;
+					case R.id.radio_setup_mana_black:
+						setManaColor(player, Constants.MANA_BLACK);
+						break;
+					case R.id.radio_setup_mana_red:
+						setManaColor(player, Constants.MANA_RED);
+						break;
+					case R.id.radio_setup_mana_green:
+						setManaColor(player, Constants.MANA_GREEN);
+						break;
+					default: // Colorless
+						setManaColor(player, Constants.MANA_COLORLESS);
+						break;
 				}
-			} });
+			}
+		});
 		alertDialog.show();
 	}
 
-	/* Return true if there's a valid game to continue */
-	boolean checkForContinue() {
+	/**
+	 * Checks to see if it is possible to continue a game in progress.
+	 * @return True if there exists a valid game that can be continued, else false
+	 */
+	private boolean checkForContinue() {
+		// Verify that the number of players, player names, and teams match
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SetupActivity.this);
 		int saved_num_players = pref.getInt(MainActivity.KEY_NUM_PLAYERS, -1);
-		String[] temp_player_names = Arrays.copyOf(player_names, num_players);
+		String[] temp_player_names = Arrays.copyOf(playerNames, numPlayers);
 		Arrays.sort(temp_player_names); // Don't care about order for equality, so sort both
-		String[] saved_player_names = pref.getString(MainActivity.KEY_PLAYER_NAMES, ",,,").split(",", saved_num_players);
+		String[] saved_player_names = pref.getString(MainActivity.KEY_PLAYER_NAMES, ",,,")
+				.split(",", saved_num_players);
 		Arrays.sort(saved_player_names);
-		boolean teams = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("KEY_TEAM_TOGETHER", false);
-		return pref.getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) && saved_num_players == num_players && Arrays.equals(temp_player_names, saved_player_names) && starting_life == pref.getInt(MainActivity.KEY_STARTING_LIFE, -1) && teams == checkbox_team_together.isChecked();
+		boolean teams = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+				.getBoolean("KEY_TEAM_TOGETHER", false);
+		return pref.getBoolean(MainActivity.KEY_GAME_IN_PROGRESS, false) && saved_num_players 
+				== numPlayers && Arrays.equals(temp_player_names, saved_player_names) 
+				&& startingLife == pref.getInt(MainActivity.KEY_STARTING_LIFE, -1) 
+				&& teams == teamTogetherCheckbox.isChecked();
 	}
 
+	/**
+	 * Create the menu in the action bar.
+	 * @param menu The menu to create.
+	 */
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		this.optionsMenu = menu;
 		MenuInflater inflater = getMenuInflater();
@@ -370,114 +408,117 @@ public class SetupActivity extends Activity implements OnClickListener {
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	/**
+	 * Handle clicks on the menu items.
+	 * @param item The clicked menu item.
+	 * @return Returns true if consumed here.
+	 */
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_setup_done:
-			final Intent intent = new Intent(SetupActivity.this, MainActivity.class);
-			boolean teams = checkbox_team_together.isChecked();
-			String[] team_names = new String[2];
-			team_names[0] = player_names[PLAYER_1] + (num_players > 2 ? " & " + player_names[PLAYER_3] : "");
-			team_names[1] = player_names[PLAYER_2] + (num_players > 3 ? " & " + player_names[PLAYER_4] : "");
-			intent.putExtra(MainActivity.KEY_NUM_PLAYERS, teams ? 2 : num_players);
-			intent.putExtra(MainActivity.KEY_PLAYER_NAMES, teams ? team_names : player_names);
-			intent.putExtra(MainActivity.KEY_STARTING_LIFE, starting_life);
-			intent.putExtra(MainActivity.KEY_MANA_COLOR, mana_color);
-			// Give option to continue previous game if there's one to continue and the players/starting life is the same
-			if (checkForContinue()) {
-				String[] options = {"Continue Game", "Create New Game"};
-				new AlertDialog.Builder(this)
-				.setTitle("Continue Game?")
-				.setItems(options, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialoginterface, int i) {
-						if (i == 0) {
-							intent.putExtra(MainActivity.KEY_CONTINUE_GAME, 1);
-						}
-						else {
-							intent.putExtra(MainActivity.KEY_CONTINUE_GAME, 0);
-						}
-						startActivity(intent);
-					}
-				}).show();
-			}
-			else {
-				startActivity(intent);
-			}
-			return true;
-		case R.id.menu_setup_shuffle_players:
-			// Shuffle the order of players
-			for (int i = 0; i < num_players; i++) {
-				// Get random index
-				Random numgen = new Random();
-				int index = numgen.nextInt(num_players);
-
-				// Swap name
-				String temp_name = player_names[index];
-				player_names[index] = player_names[i];
-				player_names[i] = temp_name;
-
-				// Swap mana color
-				int temp_mana = mana_color[index];
-				mana_color[index] = mana_color[i];
-				mana_color[i] = temp_mana;
-			}
-			updateViews();
-			return true;
-		case R.id.menu_setup_settings:
-			Intent intent2 = new Intent(SetupActivity.this, Prefs.class);
-			startActivity(intent2);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	public void setWorkingActionButtonState(final boolean refreshing) {
-		if (optionsMenu != null) {
-			final MenuItem refreshItem = optionsMenu
-					.findItem(R.id.menu_setup_working);
-			if (refreshItem != null) {
-				if (refreshing) {
-					refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-				} else {
-					refreshItem.setActionView(null);
+			case R.id.menu_setup_done:
+				// Start the game! Pass all of the data through the extras.
+				final Intent intent = new Intent(SetupActivity.this, MainActivity.class);
+				boolean teams = teamTogetherCheckbox.isChecked();
+				String[] team_names = null;
+				if (teams) {
+					team_names = new String[2];
+					team_names[0] = playerNames[Constants.PLAYER_1] + (numPlayers > 2 ? " & " 
+							+ playerNames[Constants.PLAYER_3] : "");
+					team_names[1] = playerNames[Constants.PLAYER_2] + (numPlayers > 3 ? " & " 
+							+ playerNames[Constants.PLAYER_4] : "");
 				}
+				intent.putExtra(MainActivity.KEY_NUM_PLAYERS, teams ? 2 : numPlayers);
+				intent.putExtra(MainActivity.KEY_PLAYER_NAMES, teams ? team_names : playerNames);
+				intent.putExtra(MainActivity.KEY_STARTING_LIFE, startingLife);
+				intent.putExtra(MainActivity.KEY_MANA_COLOR, playerManaColors);
+				// Give the option to continue a previous game instead, if applicable
+				if (checkForContinue()) {
+					String[] options = {"Create New Game", "Continue Game"};
+					new AlertDialog.Builder(this)
+					.setTitle("Continue Game?")
+					.setItems(options, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialoginterface, int which) {
+							intent.putExtra(MainActivity.KEY_CONTINUE_GAME, which);
+							startActivity(intent);
+						}
+					}).show();
+				} else {
+					startActivity(intent);
+				}
+				return true;
+			case R.id.menu_setup_shuffle_players:
+				// Shuffle the order of players
+				Random numgen = new Random();
+				for (int i = 0; i < numPlayers; i++) {
+					// Get random index
+					int index = numgen.nextInt(numPlayers);
+	
+					// Swap name
+					String temp_name = playerNames[index];
+					playerNames[index] = playerNames[i];
+					playerNames[i] = temp_name;
+	
+					// Swap mana color
+					int temp_mana = playerManaColors[index];
+					playerManaColors[index] = playerManaColors[i];
+					playerManaColors[i] = temp_mana;
+				}
+				updateViews();
+				return true;
+			case R.id.menu_setup_settings:
+				Intent intent2 = new Intent(SetupActivity.this, Prefs.class);
+				startActivity(intent2);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/**
+	 * Set the state of the working spinner.
+	 * @param refreshing True if the spinner should animate.
+	 */
+	private void setWorkingActionButtonState(boolean refreshing) {
+		if (optionsMenu != null) {
+			MenuItem refreshItem = optionsMenu.findItem(R.id.menu_setup_working);
+			if (refreshItem != null) {
+				refreshItem.setActionView(refreshing ? R.layout.actionbar_indeterminate_progress 
+						: null);
 			}
 		}
 	}
 
-
+	/**
+	 * Save activity state when it's paused.
+	 */
 	@Override
 	protected void onPause() {
 		// Save the player names, etc.
-		String names = player_names[PLAYER_1] + ',' + player_names[PLAYER_2] + ',' + player_names[PLAYER_3] + ',' + player_names[PLAYER_4];
+		String names = playerNames[Constants.PLAYER_1] + ',' + playerNames[Constants.PLAYER_2] + ',' + playerNames[Constants.PLAYER_3] + ',' + playerNames[Constants.PLAYER_4];
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_PLAYER_NAMES", names).commit();
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_NUM_PLAYERS", num_players).commit();
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("KEY_TEAM_TOGETHER", checkbox_team_together.isChecked()).commit();
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_STARTING_LIFE", starting_life).commit();
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_NUM_PLAYERS", numPlayers).commit();
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("KEY_TEAM_TOGETHER", teamTogetherCheckbox.isChecked()).commit();
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt("KEY_STARTING_LIFE", startingLife).commit();
 		// Save the player mana colors
-		String mana = mana_color[PLAYER_1] + "," + mana_color[PLAYER_2] + "," + mana_color[PLAYER_3] + "," + mana_color[PLAYER_4];
+		String mana = playerManaColors[Constants.PLAYER_1] + "," + playerManaColors[Constants.PLAYER_2] + "," + playerManaColors[Constants.PLAYER_3] + "," + playerManaColors[Constants.PLAYER_4];
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("KEY_MANA_COLOR", mana).commit();
 
 		super.onPause();
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
+	/**
+	 * Save activity state if it may be killed.
+	 * @param outState The Bundle to add my state information to. 
+	 */
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		outState.putInt("setup_num_players", num_players);
-		outState.putStringArray("setup_player_names", player_names);
-		outState.putInt("setup_starting_life", starting_life);
-		outState.putIntArray("setup_mana_color", mana_color);
-		outState.putBoolean("setup_team_together", checkbox_team_together.isChecked());
+		outState.putInt("setup_num_players", numPlayers);
+		outState.putStringArray("setup_player_names", playerNames);
+		outState.putInt("setup_starting_life", startingLife);
+		outState.putIntArray("setup_mana_color", playerManaColors);
+		outState.putBoolean("setup_team_together", teamTogetherCheckbox.isChecked());
 	}
 }
