@@ -243,13 +243,13 @@ public class SetupActivity extends Activity implements OnClickListener {
 	 */
 	private void editPlayerName(final int player) {
 		AlertDialog alertDialog = new AlertDialog.Builder(SetupActivity.this).create();
-		alertDialog.setTitle("Edit Player Name");
-		alertDialog.setMessage("Enter Player " + (player + 1) + "\'s name:");                
+		alertDialog.setTitle("Enter Player " + (player + 1) + "\'s name:");                
 		// Set an EditText view to get the name   
 		final EditText input = new EditText(this); 
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 		input.setHint("Player " + (player + 1));
 		input.setText(playerNames[player]);
+		input.setPadding(32, 32, 32, 32);
 		int position = input.length();
 		Editable etext = input.getText();
 		Selection.setSelection(etext, position);
